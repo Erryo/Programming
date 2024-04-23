@@ -1,0 +1,50 @@
+Add num to temp     |def Add_num():temp += num
+set last funct to add   |last func = "add_num"
+wait for next btn
+if next button is opposite: def opposite():if last_func == "add_num": temp = str(int(temp)*-1)
+    change sign of temp
+if next button is an operator:  |DEF Add_op():final += temp
+    add temp to final   |temp = ""
+    set temp to empty   |temp += op
+    add op to temp      |last_func = "add_op"
+    wait for next button
+    if next button is numb:
+        go to start | in Add_num(): if last_func == "add_op"
+        add temp to perm    |  final += temp
+        set temp to empty   |   temp =""
+
+    if next button is operator | in Add_op(): if last_func == "add_op"
+        empty temp      | temp = ''
+        set temp to op  | temp = op
+        go to "if next button is op"
+def Add_number(num):
+    global last_func,temp
+    if last_func == "add_op":
+        final += temp
+        temp = ""
+    temp += num
+    last_func = "add_num"
+def Opposite():
+    global temp,last_func
+    if last_func == "add_num":
+        temp = str(int(temp)*-1)
+def Add_operator(op):
+    global temp,last_func,final
+    if last_func == "add_op":
+        temp = ""
+        temp = op
+    else:
+        final += temp
+        temp = op
+        last_func = "add_op"
+
+
+
+
+
+
+
+if count op > 1:
+    result = str(eval(exp_final))
+    expression_final = result + op
+    Expression_tkvat.set(expression_final)
