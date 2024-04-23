@@ -9,6 +9,11 @@ import (
 
 var server = &http.Server{Addr: ":8080"}
 
+type UserLogInData struct {
+	Username string
+	Password string
+}
+
 func LogInHandler(w http.ResponseWriter, r *http.Request) {
 	LogInFile := "./Templates/logIn.html"
 	template, err := template.ParseFiles(LogInFile)
@@ -25,6 +30,20 @@ func DefaultErrHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Error,,Default'' in GeneralHandler")
 }
 
+func SubmitLogInHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.Method)
+	var LogInData UserLogInData
+	LogInData.Username = r.FormValue("Username")
+	LogInData.Password = r.FormValue("Password")
+	if LogInData.Username == "" {
+		fmt.Println("Username is INFY")
+	} else {
+		fmt.Println("NOOOO")
+	}
+	fmt.Println("U: ", LogInData.Username)
+	fmt.Println("P: ", LogInData.Password)
+}
+
 func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("GeneralHandler: ", r.URL.Path)
 	switch r.URL.Path {
@@ -35,6 +54,8 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 	case "/LogIn":
 		LogInHandler(w, r)
 		// http.Handle("/css/", http.FileServer(http.Dir("./")))
+	case "/Submit/LogIn":
+		SubmitLogInHandler(w, r)
 	default:
 		DefaultErrHandler(w, r)
 		// http.Handle(r.URL.Path, http.FileServer(http.Dir("./")))
