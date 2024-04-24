@@ -35,13 +35,11 @@ func SubmitLogInHandler(w http.ResponseWriter, r *http.Request) {
 	var LogInData UserLogInData
 	LogInData.Username = r.FormValue("Username")
 	LogInData.Password = r.FormValue("Password")
-	if LogInData.Username == "" {
-		fmt.Println("Username is INFY")
-	} else {
-		fmt.Println("NOOOO")
-	}
+
 	fmt.Println("U: ", LogInData.Username)
 	fmt.Println("P: ", LogInData.Password)
+	var is_valid bool = CheckData(LogInData.Username, LogInData.Password)
+	fmt.Println("Log in is: ", is_valid)
 }
 
 func GeneralHandler(w http.ResponseWriter, r *http.Request) {
@@ -64,9 +62,10 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.Handle("/Static/", http.StripPrefix("/Static/", http.FileServer(http.Dir("Static"))))
-	http.HandleFunc("/", GeneralHandler)
-	if err := server.ListenAndServe(); err != http.ErrServerClosed {
-		log.Fatalf("ListenAndServe: %v", err)
-	}
+	//http.Handle("/Static/", http.StripPrefix("/Static/", http.FileServer(http.Dir("Static"))))
+	//http.HandleFunc("/", GeneralHandler)
+	//if err := server.ListenAndServe(); err != http.ErrServerClosed {
+	//	log.Fatalf("ListenAndServe: %v", err)
+	//}
+	CheckData("Infy", "Marius")
 }
