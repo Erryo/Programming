@@ -39,6 +39,9 @@ func SubmitLogInHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("U: ", LogInData.Username)
 	fmt.Println("P: ", LogInData.Password)
 	var is_valid bool = CheckData(LogInData.Username, LogInData.Password)
+	if is_valid {
+		fmt.Printf("User: %v has been validated", LogInData.Username)
+	}
 	fmt.Println("Log in is: ", is_valid)
 }
 
@@ -62,10 +65,10 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	//http.Handle("/Static/", http.StripPrefix("/Static/", http.FileServer(http.Dir("Static"))))
-	//http.HandleFunc("/", GeneralHandler)
-	//if err := server.ListenAndServe(); err != http.ErrServerClosed {
-	//	log.Fatalf("ListenAndServe: %v", err)
-	//}
-	CheckData("Infy", "Marius")
+	http.Handle("/Static/", http.StripPrefix("/Static/", http.FileServer(http.Dir("Static"))))
+	http.HandleFunc("/", GeneralHandler)
+	if err := server.ListenAndServe(); err != http.ErrServerClosed {
+		log.Fatalf("ListenAndServe: %v", err)
+	}
+	fmt.Printf("User validity: %v\n", CheckData("Infy", "Marius"))
 }

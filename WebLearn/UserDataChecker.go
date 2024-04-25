@@ -26,12 +26,6 @@ func getIndex(victim [62]string, perp string) uint8 {
 
 func Encrypt(SubPass string, offset uint8) string {
 	var encrypted_pass string
-	//	alphabet := [62]string{
-	//		"A", "b", "9", "a", "r", "E", "5", "F", "G", "H", "I", "2", "J", "K", "L", "m",
-	//		"W", "O", "P", "Q", "6", "R", "f", "T", "4", "U", "V", "N", "X", "7", "Y", "Z",
-	//		"C", "B", "0", "c", "d", "e", "S", "g", "h", "i", "3", "j", "k", "l", "M",
-	//		"n", "o", "p", "1", "v", "D", "s", "t", "u", "q", "w", "x", "y", "z", "8",
-	//	}
 	for _, value := range SubPass {
 		var index uint8 = getIndex(alphabet, string(value))
 		result := (index + offset)
@@ -85,26 +79,17 @@ func CreateFile(SubName, SubPass string) {
 	fmt.Println("CreateFile->UserData: ", UserData)
 }
 
-func ReadFile() (bool, [][]string) {
+func ReadFile() (bool, map[string]string) {
 	fmt.Println("Func ReadFile started")
-	//content, err := os.ReadFile("DataFile.txt")
-	//if err != nil {
-	//	fmt.Println("While reading file: DataFile.txt,Erro occured:", err)
-	//}
-	//if errors.Is(err, fs.ErrNotExist) {
-	//	return false
-	//}
-	//c_str := string(content)
-	//fmt.Println("cont: ", c_str)
 	var line_number uint16 = 0
-	var temp_keeper []string // Will be used to keep the username in between loops
-	var DataLines [][]string // [[U,P],[U,P]]
+	var temp_keeper []string             // Will be used to keep the user data in between loops
+	DataLines := make(map[string]string) // [[U,P],[U,P]]
 	file, err := os.Open("DataFile.txt")
 	if err != nil {
 		fmt.Println("While opening DataFile.txt,Error: ", err)
 	}
 	if errors.Is(err, fs.ErrNotExist) {
-		return false, [][]string{}
+		return false, make(map[string]string)
 	}
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
@@ -117,7 +102,7 @@ func ReadFile() (bool, [][]string) {
 			fmt.Println("Decrypt at line: ", line_number)
 			fmt.Println("Keeper is: ", temp_keeper)
 			temp_keeper = append(temp_keeper, Decrypt(scanner.Text(), 9))
-			DataLines = append(DataLines, temp_keeper)
+			DataLines[temp_keeper[0]] = temp_keeper[1]
 
 		}
 	}
@@ -125,13 +110,20 @@ func ReadFile() (bool, [][]string) {
 	return true, DataLines
 }
 
-func ValidateUserAndPassword([][]string) bool {
-	return false
+func ValidateUserAndPassword(Data map[string]string, SubName, SubPass string) bool {
+	User_Pass, ok := Data[SubName]
+	if !ok {
+		fmt.Printf("Validate->User: %v doesn't exist\n", SubName)
+		return false
+	}
+	fmt.Println("Sub->", SubName, ":", SubPass, "Data->", User_Pass)
+	fmt.Println("My check", User_Pass == SubPass)
+	return User_Pass == SubPass
 }
 
 func CheckData(SubName, SubPass string) bool {
 	var file_exists bool
-	var DataAsLines [][]string
+	var DataAsLines map[string]string
 	for {
 		file_exists, DataAsLines = ReadFile()
 		if !file_exists {
@@ -139,7 +131,7 @@ func CheckData(SubName, SubPass string) bool {
 		}
 		break
 	}
-	return ValidateUserAndPassword(DataAsLines)
+	return ValidateUserAndPassword(DataAsLines, SubName, SubPass)
 	//Create a file , come up with a storage format
 	//Possibly Create Personal encryprion method
 	//read file
