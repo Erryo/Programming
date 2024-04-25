@@ -85,7 +85,7 @@ func CreateFile(SubName, SubPass string) {
 	fmt.Println("CreateFile->UserData: ", UserData)
 }
 
-func ReadFile() bool {
+func ReadFile() (bool, [][]string) {
 	fmt.Println("Func ReadFile started")
 	//content, err := os.ReadFile("DataFile.txt")
 	//if err != nil {
@@ -97,37 +97,49 @@ func ReadFile() bool {
 	//c_str := string(content)
 	//fmt.Println("cont: ", c_str)
 	var line_number uint16 = 0
-	var DataLines []string
+	var temp_keeper []string // Will be used to keep the username in between loops
+	var DataLines [][]string // [[U,P],[U,P]]
 	file, err := os.Open("DataFile.txt")
 	if err != nil {
 		fmt.Println("While opening DataFile.txt,Error: ", err)
 	}
 	if errors.Is(err, fs.ErrNotExist) {
-		return false
+		return false, [][]string{}
 	}
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line_number++
 		if line_number%2 != 0 {
-			DataLines = append(DataLines, scanner.Text())
+			// DataLines = append(DataLines, scanner.Text())
+			temp_keeper = []string{}
+			temp_keeper = append(temp_keeper, scanner.Text())
 		} else {
 			fmt.Println("Decrypt at line: ", line_number)
-			DataLines = append(DataLines, Decrypt(scanner.Text(), 9))
+			fmt.Println("Keeper is: ", temp_keeper)
+			temp_keeper = append(temp_keeper, Decrypt(scanner.Text(), 9))
+			DataLines = append(DataLines, temp_keeper)
+
 		}
 	}
 	fmt.Println(DataLines)
-	return true
+	return true, DataLines
+}
+
+func ValidateUserAndPassword([][]string) bool {
+	return false
 }
 
 func CheckData(SubName, SubPass string) bool {
+	var file_exists bool
+	var DataAsLines [][]string
 	for {
-		var file_exists bool = ReadFile()
+		file_exists, DataAsLines = ReadFile()
 		if !file_exists {
 			CreateFile(SubName, SubPass)
 		}
 		break
 	}
-	return false
+	return ValidateUserAndPassword(DataAsLines)
 	//Create a file , come up with a storage format
 	//Possibly Create Personal encryprion method
 	//read file
