@@ -14,6 +14,8 @@ type UserLogInData struct {
 	Password string
 }
 
+var LogInData UserLogInData
+
 func LogInHandler(w http.ResponseWriter, r *http.Request) {
 	LogInFile := "./Templates/logIn.html"
 	template, err := template.ParseFiles(LogInFile)
@@ -32,14 +34,30 @@ func DefaultErrHandler(w http.ResponseWriter, r *http.Request) {
 
 func SubmitLogInHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(r.Method)
-	var LogInData UserLogInData
 	LogInData.Username = r.FormValue("Username")
 	LogInData.Password = r.FormValue("Password")
 
 	fmt.Println("U: ", LogInData.Username)
 	fmt.Println("P: ", LogInData.Password)
 	var is_valid bool = CheckData(LogInData.Username, LogInData.Password)
-	fmt.Println("Log in is: ", is_valid)
+	if is_valid {
+		fmt.Println("User & Pass is valid")
+		MainPageHandler(w, r)
+	} else {
+		LogInHandler(w, r)
+	}
+}
+
+func MainPageHandler(w http.ResponseWriter, r *http.Request) {
+	mainPageFile := "./Templates/mainPage.html"
+	template, err := template.ParseFiles(mainPageFile)
+	if err != nil {
+		fmt.Println("MainPageHandler->Error template.parsefiles ")
+	}
+	err = template.ExecuteTemplate(w, "mainPage.html", LogInData)
+	if err != nil {
+		fmt.Println("MainPageHandler->error executing template ")
+	}
 }
 
 func GeneralHandler(w http.ResponseWriter, r *http.Request) {
@@ -67,5 +85,4 @@ func main() {
 	if err := server.ListenAndServe(); err != http.ErrServerClosed {
 		log.Fatalf("ListenAndServe: %v", err)
 	}
-	fmt.Printf("User validity: %v\n", CheckData("Infy", "Marius"))
 }

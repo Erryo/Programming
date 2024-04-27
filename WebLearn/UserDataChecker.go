@@ -117,7 +117,6 @@ func ValidateUserAndPassword(Data map[string]string, SubName, SubPass string) bo
 		return false
 	}
 	fmt.Println("Sub->", SubName, ":", SubPass, "Data->", User_Pass)
-	fmt.Println("My check", User_Pass == SubPass)
 	return User_Pass == SubPass
 }
 
