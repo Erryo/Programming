@@ -39,9 +39,6 @@ func SubmitLogInHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("U: ", LogInData.Username)
 	fmt.Println("P: ", LogInData.Password)
 	var is_valid bool = CheckData(LogInData.Username, LogInData.Password)
-	if is_valid {
-		fmt.Printf("User: %v has been validated", LogInData.Username)
-	}
 	fmt.Println("Log in is: ", is_valid)
 }
 
