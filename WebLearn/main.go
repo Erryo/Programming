@@ -42,7 +42,8 @@ func SubmitLogInHandler(w http.ResponseWriter, r *http.Request) {
 	var is_valid bool = CheckData(LogInData.Username, LogInData.Password)
 	if is_valid {
 		fmt.Println("User & Pass is valid")
-		MainPageHandler(w, r)
+		http.Redirect(w, r, "/mainPage", http.StatusMovedPermanently)
+		// MainPageHandler(w, r)
 	} else {
 		LogInHandler(w, r)
 	}
@@ -67,6 +68,8 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 		if err := server.Close(); err != nil {
 			log.Fatal(err)
 		}
+	case "/mainPage":
+		MainPageHandler(w, r)
 	case "/LogIn":
 		LogInHandler(w, r)
 		// http.Handle("/css/", http.FileServer(http.Dir("./")))
