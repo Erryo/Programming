@@ -1,0 +1,20 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+  background: seagreen;
+  background-image: url(/Static/Images/a_map_of_a_city.jpg);
+  background-size: cover;
+  background-position: center;
+}
+div {
+  padding: 10px 10px 10px 10px;
+  border: none;
+  border: 2px solid gray;
+  border-radius: 10px;
+  background-color: rgba(250, 240, 230, 0.8);
+}
+h1 {
+  font-size: 60px;
+}

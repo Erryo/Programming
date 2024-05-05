@@ -29,6 +29,15 @@ func LogInHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func DefaultErrHandler(w http.ResponseWriter, r *http.Request) {
+	notFoundHtml := "./Templates/notFound.html"
+	template, err := template.ParseFiles(notFoundHtml)
+	if err != nil {
+		log.Fatalf("Error parsing file: %v", err)
+	}
+	err = template.ExecuteTemplate(w, "notFound.html", nil)
+	if err != nil {
+		log.Fatalf("Error executing template: %v ", err)
+	}
 	fmt.Println("Error,,Default'' in GeneralHandler")
 }
 
@@ -61,6 +70,22 @@ func MainPageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func TicTacToeHandler(w http.ResponseWriter, r *http.Request) {
+	ticFile := "./Templates/ticTacToe.html"
+	template, err := template.ParseFiles(ticFile)
+	if err != nil {
+		fmt.Println("TicTacToeHandler->Error template.parsefiles ")
+	}
+	err = template.ExecuteTemplate(w, "ticTacToe.html", LogInData)
+	if err != nil {
+		fmt.Println("TicTacToeHandler->error executing template ")
+	}
+}
+
+func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("CreateUserHandler")
+}
+
 func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("GeneralHandler: ", r.URL.Path)
 	switch r.URL.Path {
@@ -75,6 +100,8 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 		// http.Handle("/css/", http.FileServer(http.Dir("./")))
 	case "/Submit/LogIn":
 		SubmitLogInHandler(w, r)
+	case "/TicTacToe":
+		TicTacToeHandler(w, r)
 	default:
 		DefaultErrHandler(w, r)
 		// http.Handle(r.URL.Path, http.FileServer(http.Dir("./")))
