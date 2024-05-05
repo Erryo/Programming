@@ -5,14 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title></title>
     <link href="Static/Css/mainPage.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
   </head>
   <body>
     <div class="side">
-      <button type="button">Orar</button>
-      <button type="button">Links</button>
+      <button type="Button" class="sideButton">
+        <i class="fa fa-chain"></i> Link
+      </button>
+      <button type="Button" class="sideButton">
+        <i class="fa fa-th-list"></i> Orar
+      </button>
     </div>
-    <div>
-      <h1>{{.Username}},welcome to Infy's Universe</h1>
+    <div class="greeter">
+      <h1>
+        Hey there
+        <font
+          style="
+            color: dodgerblue;
+            font-weight: 900;
+            font-style: oblique;
+            text-shadow: 3px 3px 3px dimgray;
+          "
+          >{{.Username}}</font
+        >, welcome to Infy's Universe
+      </h1>
     </div>
   </body>
 </html>
