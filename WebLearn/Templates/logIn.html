@@ -8,7 +8,7 @@
   </head>
   <body>
     <div class="Wrapper">
-      <form action="/Submit/LogIn" method="POST" class="form">
+      <form action="/Submit/LogIn" method="POST" class="form" id="LogInForm">
         <div>
           <h1>LogIn</h1>
         </div>
@@ -25,14 +25,17 @@
         </div>
         <input type="submit" name="Alons-y" value="Alons-y" class="but" />
         <div>
-          <input
-            type="button"
-            name="Create"
-            value="Not a User"
-            action="/Submit/CreateUser"
-          />
+          <button
+            type="submit"
+            class="register"
+            form="LogInForm"
+            formaction="/Register"
+          >
+            Register
+          </button>
         </div>
       </form>
     </div>
+    <script src="/Static/JavaScript/logIn.js"></script>
   </body>
 </html>

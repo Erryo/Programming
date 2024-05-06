@@ -82,8 +82,15 @@ func TicTacToeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("CreateUserHandler")
+func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("RegisterHandler")
+	LogInData.Username = r.FormValue("Username")
+	LogInData.Password = r.FormValue("Password")
+
+	fmt.Println("U: ", LogInData.Username)
+	fmt.Println("P: ", LogInData.Password)
+	CreateUser(LogInData.Username, LogInData.Password)
+	http.Redirect(w, r, "/LogIn", http.StatusMovedPermanently)
 }
 
 func GeneralHandler(w http.ResponseWriter, r *http.Request) {
@@ -102,6 +109,8 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 		SubmitLogInHandler(w, r)
 	case "/TicTacToe":
 		TicTacToeHandler(w, r)
+	case "/Register":
+		RegisterHandler(w, r)
 	default:
 		DefaultErrHandler(w, r)
 		// http.Handle(r.URL.Path, http.FileServer(http.Dir("./")))

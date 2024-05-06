@@ -8,7 +8,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 90vh;
+  min-height: 100vh;
   background: seagreen;
   background-image: url(/Static/Images/a_map_of_a_city.jpg);
   background-size: cover;
@@ -74,7 +74,7 @@ body {
   background-color: seagreen;
   color: #fff;
 }
-.Wrapper input[type="button"] {
+.register {
   margin-top: 10px;
   margin-left: 50%;
   transform: translate(-50%, 50%);

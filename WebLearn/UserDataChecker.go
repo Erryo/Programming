@@ -71,7 +71,7 @@ func CreateFile(SubName, SubPass string) {
 	if err != nil {
 		fmt.Println("At: CreateFile, Error: ", err)
 	}
-	var UserData string = SubName + "\n" + Encrypt(SubPass, 9)
+	var UserData string = SubName + "\n" + Encrypt(SubPass, 9) + "\n"
 	_, err = file.WriteString(UserData)
 	if err != nil {
 		fmt.Println("WriteString, Error: ", err)
