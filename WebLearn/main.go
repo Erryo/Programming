@@ -22,33 +22,7 @@ var (
 	LogInData UserLogInData
 )
 
-func LogInHandler(w http.ResponseWriter, r *http.Request) {
-	LogInFile := "./Templates/logIn.html"
-	template, err := template.ParseFiles(LogInFile)
-	if err != nil {
-		log.Fatalf("Error parsing file: %v", err)
-	}
-	err = template.ExecuteTemplate(w, "logIn.html", LogInErr)
-	if err != nil {
-		log.Fatalf("Error executing template: %v ", err)
-	}
-}
-
-func DefaultErrHandler(w http.ResponseWriter, r *http.Request) {
-	notFoundHtml := "./Templates/notFound.html"
-	template, err := template.ParseFiles(notFoundHtml)
-	if err != nil {
-		log.Fatalf("Error parsing file: %v", err)
-	}
-	err = template.ExecuteTemplate(w, "notFound.html", nil)
-	if err != nil {
-		log.Fatalf("Error executing template: %v ", err)
-	}
-	fmt.Println("Error,,Default'' in GeneralHandler")
-}
-
 func SubmitLogInHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.Method)
 	LogInData.Username = r.FormValue("Username")
 	LogInData.Password = r.FormValue("Password")
 
@@ -65,30 +39,6 @@ func SubmitLogInHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func MainPageHandler(w http.ResponseWriter, r *http.Request) {
-	mainPageFile := "./Templates/mainPage.html"
-	template, err := template.ParseFiles(mainPageFile)
-	if err != nil {
-		fmt.Println("MainPageHandler->Error template.parsefiles ")
-	}
-	err = template.ExecuteTemplate(w, "mainPage.html", LogInData)
-	if err != nil {
-		fmt.Println("MainPageHandler->error executing template ")
-	}
-}
-
-func TicTacToeHandler(w http.ResponseWriter, r *http.Request) {
-	ticFile := "./Templates/ticTacToe.html"
-	template, err := template.ParseFiles(ticFile)
-	if err != nil {
-		fmt.Println("TicTacToeHandler->Error template.parsefiles ")
-	}
-	err = template.ExecuteTemplate(w, "ticTacToe.html", LogInData)
-	if err != nil {
-		fmt.Println("TicTacToeHandler->error executing template ")
-	}
-}
-
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("RegisterHandler")
 	LogInData.Username = r.FormValue("Username")
@@ -100,26 +50,39 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/LogIn", http.StatusMovedPermanently)
 }
 
+func HtmlHandler(w http.ResponseWriter, r *http.Request, HtmlFile string, HtmlName string, Data interface{}) {
+	template, err := template.ParseFiles(HtmlFile)
+	if err != nil {
+		fmt.Printf("HtmlHandler:%v ->Error template.parsefiles: %v \n", HtmlName, err)
+	}
+	err = template.ExecuteTemplate(w, HtmlName, Data)
+	if err != nil {
+		fmt.Printf("HtmlHandler:%v ->error executing template: %v \n", HtmlName, err)
+	}
+}
+
 func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("GeneralHandler: ", r.URL.Path)
 	switch r.URL.Path {
 	case "/mainPage":
 		LogInErr.Error = ""
-		MainPageHandler(w, r)
+		HtmlHandler(w, r, "./Templates/mainPage.html", "mainPage.html", LogInData)
 	case "/LogIn":
-		LogInHandler(w, r)
+		HtmlHandler(w, r, "./Templates/logIn.html", "logIn.html", LogInErr)
 		// http.Handle("/css/", http.FileServer(http.Dir("./")))
 	case "/Submit/LogIn":
 		LogInErr.Error = ""
 		SubmitLogInHandler(w, r)
 	case "/TicTacToe":
 		LogInErr.Error = ""
-		TicTacToeHandler(w, r)
+		HtmlHandler(w, r, "./Templates/ticTacToe.html", "ticTacToe.html", nil)
 	case "/Register":
 		RegisterHandler(w, r)
+	case "/Schedule":
+		HtmlHandler(w, r, "./Templates/schedule.html", "schedule.html", nil)
 	default:
 		LogInErr.Error = ""
-		DefaultErrHandler(w, r)
+		HtmlHandler(w, r, "./Templates/notFound.html", "notFound.html", nil)
 		// http.Handle(r.URL.Path, http.FileServer(http.Dir("./")))
 
 	}
