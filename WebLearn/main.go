@@ -13,8 +13,14 @@ type UserLogInData struct {
 	Username string
 	Password string
 }
+type LogInError struct {
+	Error string
+}
 
-var LogInData UserLogInData
+var (
+	LogInErr  LogInError
+	LogInData UserLogInData
+)
 
 func LogInHandler(w http.ResponseWriter, r *http.Request) {
 	LogInFile := "./Templates/logIn.html"
@@ -22,7 +28,7 @@ func LogInHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatalf("Error parsing file: %v", err)
 	}
-	err = template.ExecuteTemplate(w, "logIn.html", nil)
+	err = template.ExecuteTemplate(w, "logIn.html", LogInErr)
 	if err != nil {
 		log.Fatalf("Error executing template: %v ", err)
 	}
@@ -54,7 +60,8 @@ func SubmitLogInHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/mainPage", http.StatusMovedPermanently)
 		// MainPageHandler(w, r)
 	} else {
-		LogInHandler(w, r)
+		LogInErr.Error = "User or password incorrect/does not exist"
+		http.Redirect(w, r, "/LogIn", http.StatusMovedPermanently)
 	}
 }
 
@@ -89,29 +96,29 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("U: ", LogInData.Username)
 	fmt.Println("P: ", LogInData.Password)
-	CreateUser(LogInData.Username, LogInData.Password)
+	LogInErr.Error = CreateUser(LogInData.Username, LogInData.Password)
 	http.Redirect(w, r, "/LogIn", http.StatusMovedPermanently)
 }
 
 func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("GeneralHandler: ", r.URL.Path)
 	switch r.URL.Path {
-	case "/end/":
-		if err := server.Close(); err != nil {
-			log.Fatal(err)
-		}
 	case "/mainPage":
+		LogInErr.Error = ""
 		MainPageHandler(w, r)
 	case "/LogIn":
 		LogInHandler(w, r)
 		// http.Handle("/css/", http.FileServer(http.Dir("./")))
 	case "/Submit/LogIn":
+		LogInErr.Error = ""
 		SubmitLogInHandler(w, r)
 	case "/TicTacToe":
+		LogInErr.Error = ""
 		TicTacToeHandler(w, r)
 	case "/Register":
 		RegisterHandler(w, r)
 	default:
+		LogInErr.Error = ""
 		DefaultErrHandler(w, r)
 		// http.Handle(r.URL.Path, http.FileServer(http.Dir("./")))
 

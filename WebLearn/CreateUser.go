@@ -18,7 +18,7 @@ func appendToFile(Name, EPass string) {
 	}
 }
 
-func CreateUser(Name, Pass string) {
+func CreateUser(Name, Pass string) string {
 	var file_exists bool
 	var DataAsLines map[string]string
 	for {
@@ -34,5 +34,7 @@ func CreateUser(Name, Pass string) {
 		appendToFile(Name, Encr_Pass)
 	} else {
 		fmt.Println("User: ", Name, "Already exists")
+		return "User already exists"
 	}
+	return ""
 }
