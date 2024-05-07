@@ -45,3 +45,12 @@ body {
 .button:hover {
   background-color: RoyalBlue;
 }
+.invisible {
+  visibility: hidden;
+  position: absolute;
+  left: -9999px;
+}
+.visible {
+  visibility: visible;
+  position: static;
+}

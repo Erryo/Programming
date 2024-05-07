@@ -9,7 +9,7 @@ import (
 
 var server = &http.Server{Addr: ":8080"}
 
-type UserLogInData struct {
+type User struct {
 	Username string
 	Password string
 }
@@ -19,7 +19,7 @@ type LogInError struct {
 
 var (
 	LogInErr  LogInError
-	LogInData UserLogInData
+	LogInData User
 )
 
 func SubmitLogInHandler(w http.ResponseWriter, r *http.Request) {
@@ -28,9 +28,11 @@ func SubmitLogInHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("U: ", LogInData.Username)
 	fmt.Println("P: ", LogInData.Password)
-	var is_valid bool = CheckData(LogInData.Username, LogInData.Password)
+	var is_valid bool = CheckData(LogInData, "./Static/JsonData/Users.json")
 	if is_valid {
 		fmt.Println("User & Pass is valid")
+		// ConvertToJson(LogInData, "./Static/JsonData/Users.json")
+		// AppendToArray("./Static/JsonData/Users.json", LogInData)
 		http.Redirect(w, r, "/mainPage", http.StatusMovedPermanently)
 		// MainPageHandler(w, r)
 	} else {
@@ -46,7 +48,8 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("U: ", LogInData.Username)
 	fmt.Println("P: ", LogInData.Password)
-	LogInErr.Error = CreateUser(LogInData.Username, LogInData.Password)
+	//	LogInErr.Error = CreateUser(LogInData.Username, LogInData.Password)
+	LogInErr.Error = AppendToArray("./Static/JsonData/Users.json", LogInData)
 	http.Redirect(w, r, "/LogIn", http.StatusMovedPermanently)
 }
 
