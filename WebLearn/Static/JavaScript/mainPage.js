@@ -1,3 +1,3 @@
-function changeURL() {
-  window.location.pathname = "/TicTacToe";
+function changeURL(path) {
+  window.location.pathname = path;
 }

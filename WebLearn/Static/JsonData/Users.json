@@ -1,14 +1,75 @@
 [
-  {
-    "Username": "Marius",
-    "Password": "CK1ZJq"
-  },
-  {
-    "Username": "Infy",
-    "Password": "uJK19A"
-  },
-  {
-    "Username": "ID",
-    "Password": "NJAA"
-  }
+ {
+  "Username": "Abac",
+  "Password": "JIJk",
+  "Subjects": null,
+  "Schedule": null
+ },
+ {
+  "Username": "Adac",
+  "Password": "HlJk",
+  "Subjects": null,
+  "Schedule": null
+ },
+ {
+  "Username": "Basd",
+  "Password": "3JAl",
+  "Subjects": [
+   "Math",
+   "Litera",
+   "Art",
+   "P.E."
+  ],
+  "Schedule": null
+ },
+ {
+  "Username": "Bbabb",
+  "Password": "IIJII",
+  "Subjects": [
+   "Math",
+   "Litera",
+   "Art",
+   "P.E."
+  ],
+  "Schedule": null
+ },
+ {
+  "Username": "Infy",
+  "Password": "uJK19A",
+  "Subjects": [
+   "Math",
+   "Litera",
+   "Art",
+   "P.E."
+  ],
+  "Schedule": null
+ },
+ {
+  "Username": "Marius",
+  "Password": "CK1ZJq",
+  "Subjects": null,
+  "Schedule": null
+ },
+ {
+  "Username": "cca",
+  "Password": "kJkJ",
+  "Subjects": [
+   "Math",
+   "Litera",
+   "Art",
+   "P.E."
+  ],
+  "Schedule": null
+ },
+ {
+  "Username": "ccar",
+  "Password": "kkJK",
+  "Subjects": [
+   "Math",
+   "Litera",
+   "Art",
+   "P.E."
+  ],
+  "Schedule": null
+ }
 ]

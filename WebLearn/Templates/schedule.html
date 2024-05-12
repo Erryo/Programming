@@ -6,5 +6,41 @@
     <title>My School Schedule</title>
     <link href="../Static/Css/schedule.css" rel="stylesheet" />
   </head>
-  <body></body>
+  <body>
+    <div class="title">
+      <h1>{{.Username}}'s School Schedule</h1>
+    </div>
+    <div class="Subjects">
+      <div class="wrapper">
+        <h2 class="SectionH">Add Subjects</h2>
+        <form class="addSubjects">
+          <input
+            type="text"
+            name="Subject"
+            value="SubjectVal"
+            placeholder="SubjectPlaceH"
+          />
+
+          <button type="button" onclick="AddSubj()">+</button>
+        </form>
+      </div>
+      <div style="height: 250px" class="wrapper" id="ListOfSubjects">
+        <h2 class="SectionH">List of Subjects</h2>
+        <ul>
+          <li>Lorem ipsum dolor.</li>
+          <li>Lorem ipsum dolor.</li>
+          <li>Lorem ipsum dolor.</li>
+          <li>Lorem ipsum dolor.</li>
+          <li>cillum sint consectetur cupidatat.</li>
+          <li>cillum sint consectetur cupidatat.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="wrapper">
+      <div class="day">
+        <h2 class="SectionH">Monday</h2>
+      </div>
+      {{range .Schedule}} {{end}}
+    </div>
+  </body>
 </html>

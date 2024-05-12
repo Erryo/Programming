@@ -4,7 +4,50 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"sort"
 )
+
+func binarySearch(a []User, search string) (result int, searchCount int) {
+	mid := len(a) / 2
+	switch {
+	case len(a) == 0:
+		result = -1 // not found
+	case a[mid].Username > search:
+		result, searchCount = binarySearch(a[:mid], search)
+	case a[mid].Username < search:
+		result, searchCount = binarySearch(a[mid+1:], search)
+		if result >= 0 { // if anything but the -1 "not found" result
+			result += mid + 1
+		}
+	default: // a[mid] == search
+		result = mid // found
+	}
+	searchCount++
+	return
+}
+
+func sortSlice(list []User, filepath string) {
+	sort.SliceStable(list, func(i, j int) bool {
+		return list[i].Username < list[j].Username
+	})
+	ConvertToJson(list, filepath)
+}
+
+func DeleteUser(Username string, filepath string) bool {
+	fmt.Println("DeleteUser: ", Username, " started")
+	readUsers := GetJson("./Static/JsonData/Users.json")
+	if !UserExists(readUsers, Username) {
+		fmt.Printf("DeleteUser:%v does not exist\n", Username)
+		return false
+	}
+	// sortSlice(readUsers, "./Static/JsonData/Users.json")
+	userIndex, _ := binarySearch(readUsers, Username)
+	newSlice := make([]User, 0)
+	newSlice = append(newSlice, readUsers[:userIndex]...)
+	newSlice = append(newSlice, readUsers[userIndex+1:]...)
+	ConvertToJson(newSlice, filepath)
+	return true
+}
 
 func CheckData(user User, filepath string) bool {
 	var readUsers []User = GetJson(filepath)
@@ -18,9 +61,9 @@ func CheckData(user User, filepath string) bool {
 	return false
 }
 
-func UserExists(allUsers []User, user User) bool {
+func UserExists(allUsers []User, Username string) bool {
 	for _, value := range allUsers {
-		if value.Username == user.Username {
+		if value.Username == Username {
 			return true
 		}
 	}
@@ -29,10 +72,11 @@ func UserExists(allUsers []User, user User) bool {
 
 func AppendToArray(filepath string, user User) string {
 	var readUsers []User = GetJson(filepath)
-	if !UserExists(readUsers, user) {
+	if !UserExists(readUsers, user.Username) {
 		user.Password = Encrypt(user.Password, 9)
 		readUsers = append(readUsers, user)
-		ConvertToJson(readUsers, filepath)
+		sortSlice(readUsers, filepath)
+
 		return ""
 	} else {
 		fmt.Printf("User:%v already exists \n", user.Username)

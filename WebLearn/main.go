@@ -12,6 +12,8 @@ var server = &http.Server{Addr: ":8080"}
 type User struct {
 	Username string
 	Password string
+	Subjects []string
+	Schedule [][]string
 }
 type LogInError struct {
 	Error string
@@ -47,6 +49,9 @@ func GetLoggedCookie(w http.ResponseWriter, r *http.Request) bool {
 func SubmitLogInHandler(w http.ResponseWriter, r *http.Request) {
 	LogInData.Username = r.FormValue("Username")
 	LogInData.Password = r.FormValue("Password")
+
+	Monday := []string{"Math", "Litera", "Art", "P.E."}
+	LogInData.Subjects = Monday
 
 	fmt.Println("U: ", LogInData.Username)
 	fmt.Println("P: ", LogInData.Password)
@@ -103,8 +108,13 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 			HtmlHandler(w, r, "./Templates/ticTacToe.html", "ticTacToe.html", nil)
 		case "/Register":
 			RegisterHandler(w, r)
+		case "/DeleteMe":
+			DeleteUser(LogInData.Username, "./Static/JsonData/Users.json")
+			http.Redirect(w, r, "/LogOut", http.StatusMovedPermanently)
 		case "/Schedule":
-			HtmlHandler(w, r, "./Templates/schedule.html", "schedule.html", nil)
+			//		Monday := []string{"Math", "Litera", "Art", "P.E."}
+			//		LogInData.Schedule = append(LogInData.Schedule, Monday)
+			HtmlHandler(w, r, "./Templates/schedule.html", "schedule.html", LogInData)
 		case "/LogOut":
 			SetLoggedCookie(w, r, "false")
 			HtmlHandler(w, r, "./Templates/logIn.html", "logIn.html", LogInErr)
@@ -148,6 +158,7 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	http.Handle("/Static/", http.StripPrefix("/Static/", http.FileServer(http.Dir("Static"))))
 	http.HandleFunc("/", GeneralHandler)
+
 	if err := server.ListenAndServe(); err != http.ErrServerClosed {
 		log.Fatalf("ListenAndServe: %v", err)
 	}
