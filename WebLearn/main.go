@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"fmt"
 	"html/template"
 	"log"
@@ -24,28 +25,6 @@ var (
 	LogInData User
 )
 
-func SetLoggedCookie(w http.ResponseWriter, r *http.Request, isLogged string) {
-	cookie := &http.Cookie{
-		Name:  "UserStatus",
-		Value: isLogged,
-		Path:  "/",
-	}
-	http.SetCookie(w, cookie)
-}
-
-func GetLoggedCookie(w http.ResponseWriter, r *http.Request) bool {
-	cookie, err := r.Cookie("UserStatus")
-	if err != nil {
-		fmt.Println("cookie not found")
-		return false
-	}
-	if cookie.Value == "true" {
-		fmt.Println("GetLoggedCookie->cookie true")
-		return true
-	}
-	return false
-}
-
 func SubmitLogInHandler(w http.ResponseWriter, r *http.Request) {
 	LogInData.Username = r.FormValue("Username")
 	LogInData.Password = r.FormValue("Password")
@@ -58,7 +37,7 @@ func SubmitLogInHandler(w http.ResponseWriter, r *http.Request) {
 	var is_valid bool = CheckData(LogInData, "./Static/JsonData/Users.json")
 	if is_valid {
 		fmt.Println("User & Pass is valid")
-		SetLoggedCookie(w, r, "true")
+		SetLoggedCookie(w, r, LogInData.Username)
 		http.Redirect(w, r, "/mainPage", http.StatusMovedPermanently)
 		// MainPageHandler(w, r)
 	} else {
@@ -116,7 +95,7 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 			//		LogInData.Schedule = append(LogInData.Schedule, Monday)
 			HtmlHandler(w, r, "./Templates/schedule.html", "schedule.html", LogInData)
 		case "/LogOut":
-			SetLoggedCookie(w, r, "false")
+			SetLoggedCookie(w, r, "nil")
 			HtmlHandler(w, r, "./Templates/logIn.html", "logIn.html", LogInErr)
 			// http.Redirect(w, r, "/LogIn", http.StatusMovedPermanently)
 		default:
@@ -134,7 +113,7 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 			HtmlHandler(w, r, "./Templates/logIn.html", "logIn.html", LogInErr)
 			// http.Handle("/css/", http.FileServer(http.Dir("./")))
 		case "/LogOut":
-			SetLoggedCookie(w, r, "false")
+			SetLoggedCookie(w, r, "nil")
 			HtmlHandler(w, r, "./Templates/logIn.html", "logIn.html", LogInErr)
 		case "/Submit/LogIn":
 			LogInErr.Error = ""
@@ -156,6 +135,13 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	y := &secretKey
+	var err error
+	*y, err = hex.DecodeString("13d6b4dff8f84a10851021ec8608f814570d562c92fe6b5ec4c9f595bcb3234b")
+	fmt.Println("main secretKey:", secretKey, "   *y   ", *y)
+	if err != nil {
+		log.Fatal(err)
+	}
 	http.Handle("/Static/", http.StripPrefix("/Static/", http.FileServer(http.Dir("Static"))))
 	http.HandleFunc("/", GeneralHandler)
 

@@ -53,7 +53,7 @@ func CheckData(user User, filepath string) bool {
 	var readUsers []User = GetJson(filepath)
 	for _, value := range readUsers {
 		if value.Username == user.Username {
-			if Decrypt(value.Password, 9) == user.Password {
+			if value.Password == Encrypt(user.Password, 9) {
 				return true
 			}
 		}
