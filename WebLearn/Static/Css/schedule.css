@@ -2,7 +2,7 @@ body {
   display: flex;
   flex-direction: column;
   background-color: #f94642;
-  background-image: url("../Images/a_space_ship_man_rocky.jpg");
+  background-image: url("/Static/Images/a_space_ship_man_rocky.jpg");
   background-size: cover;
   background-repeat: no-repeat;
 }
@@ -44,4 +44,12 @@ body {
   padding: 4px;
   border: none;
   outline: none;
+}
+.addSubjects input[type="button"] {
+  width: 28px;
+  border-radius: 5px;
+  font-weight: bolder;
+  font-size: 18px;
+  outline: none;
+  border: none;
 }

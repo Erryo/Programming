@@ -1,11 +1,13 @@
 package main
 
 import (
+	"cmp"
 	"encoding/hex"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+	"slices"
 )
 
 var server = &http.Server{Addr: ":8080"}
@@ -53,7 +55,18 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("U: ", LogInData.Username)
 	fmt.Println("P: ", LogInData.Password)
-	LogInErr.Error = AppendToArray("./Static/JsonData/Users.json", LogInData)
+	readUsers := GetJson("./Static/JsonData/Users.json")
+	userIndex, found := slices.BinarySearchFunc(readUsers, LogInData, func(a, b User) int {
+		return cmp.Compare(a.Username, b.Username)
+	})
+	if found {
+		LogInErr.Error = "Use already exists!"
+	} else {
+		readUsers = slices.Insert(readUsers, userIndex, LogInData)
+		readUsers[userIndex].Password = Encrypt(readUsers[userIndex].Password, 9)
+		ConvertToJson(readUsers, "./Static/JsonData/Users.json")
+	}
+	// LogInErr.Error = AppendToArray("./Static/JsonData/Users.json", LogInData)
 	http.Redirect(w, r, "/LogIn", http.StatusMovedPermanently)
 }
 
@@ -68,9 +81,32 @@ func HtmlHandler(w http.ResponseWriter, r *http.Request, HtmlFile string, HtmlNa
 	}
 }
 
+func SubmitAddSubject(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("SubmitAddSubject called")
+	r.ParseForm()
+	subject := r.FormValue("Subject")
+	fmt.Println("Subject: ", subject)
+
+	readUsers := GetJson("./Static/JsonData/Users.json")
+	userIndex, found := slices.BinarySearchFunc(readUsers, LogInData, func(i, j User) int {
+		return cmp.Compare(i.Username, j.Username)
+	})
+	if !found {
+		fmt.Println("SubmitAddSubject: ", LogInData.Username, " notFound")
+		return
+	}
+	subjIndex, found := slices.BinarySearch(readUsers[userIndex].Subjects, subject)
+	if !found {
+		readUsers[userIndex].Subjects = slices.Insert(readUsers[userIndex].Subjects, subjIndex, subject)
+		fmt.Println(LogInData.Username, "'s  subjects:", readUsers[userIndex].Subjects)
+		ConvertToJson(readUsers, "./Static/JsonData/Users.json")
+	}
+}
+
 func GeneralHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("GeneralHandler: ", r.URL.Path)
+	fmt.Println("GeneralHandler URL.Path: ", r.URL.Path)
 	if GetLoggedCookie(w, r) {
+		fmt.Println("GeneralHandler GetLoggedCookie:true")
 		switch r.URL.Path {
 		case "/mainPage":
 			LogInErr.Error = ""
@@ -82,6 +118,8 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 		case "/Submit/LogIn":
 			LogInErr.Error = ""
 			SubmitLogInHandler(w, r)
+		case "/Submit/AddSubject":
+			SubmitAddSubject(w, r)
 		case "/TicTacToe":
 			LogInErr.Error = ""
 			HtmlHandler(w, r, "./Templates/ticTacToe.html", "ticTacToe.html", nil)
@@ -93,11 +131,12 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 		case "/Schedule":
 			//		Monday := []string{"Math", "Litera", "Art", "P.E."}
 			//		LogInData.Schedule = append(LogInData.Schedule, Monday)
+			fmt.Println("/Schedule casse")
 			HtmlHandler(w, r, "./Templates/schedule.html", "schedule.html", LogInData)
 		case "/LogOut":
 			SetLoggedCookie(w, r, "nil")
 			HtmlHandler(w, r, "./Templates/logIn.html", "logIn.html", LogInErr)
-			// http.Redirect(w, r, "/LogIn", http.StatusMovedPermanently)
+			// http.Redirect(w, r, "/LogIn", http.StatusFound)
 		default:
 			LogInErr.Error = ""
 			HtmlHandler(w, r, "./Templates/notFound.html", "notFound.html", nil)
@@ -120,13 +159,14 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 			SubmitLogInHandler(w, r)
 		case "/TicTacToe":
 			LogInErr.Error = ""
-			http.Redirect(w, r, "/LogIn", http.StatusMovedPermanently)
+			http.Redirect(w, r, "/LogIn", http.StatusNotModified)
 		case "/Register":
 			RegisterHandler(w, r)
 		case "/Schedule":
-			http.Redirect(w, r, "/LogIn", http.StatusMovedPermanently)
+			http.Redirect(w, r, "/LogIn", http.StatusNotModified)
 		default:
 			LogInErr.Error = ""
+			// http.Redirect(w, r, "/LogIn", http.StatusMovedPermanently)
 			HtmlHandler(w, r, "./Templates/notFound.html", "notFound.html", nil)
 			// http.Handle(r.URL.Path, http.FileServer(http.Dir("./")))
 

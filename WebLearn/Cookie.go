@@ -48,7 +48,7 @@ func SetLoggedCookie(w http.ResponseWriter, r *http.Request, Value string) {
 		Secure:   true,
 		HttpOnly: true,
 	}
-	fmt.Println("SetLoggedCookie:secretKey: ", secretKey)
+	// fmt.Println("SetLoggedCookie:secretKey: ", secretKey)
 
 	mac := hmac.New(sha256.New, secretKey)
 	mac.Write([]byte(cookie.Name))
@@ -62,7 +62,7 @@ func SetLoggedCookie(w http.ResponseWriter, r *http.Request, Value string) {
 func GetLoggedCookie(w http.ResponseWriter, r *http.Request) bool {
 	cookieValue := Read(r, "UserStatus")
 
-	fmt.Println("GetLoggedCookie:cookieValue: ", cookieValue)
+	// fmt.Println("GetLoggedCookie:cookieValue: ", cookieValue)
 	if cookieValue == "" {
 		return false
 	}
