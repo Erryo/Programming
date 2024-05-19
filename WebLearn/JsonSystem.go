@@ -10,24 +10,31 @@ import (
 
 func DeleteUser(Username string, filepath string) bool {
 	fmt.Println("DeleteUser: ", Username, " started")
+	var userIndex int
 	readUsers := GetJson("./Static/JsonData/Users.json")
-	_, found := slices.BinarySearchFunc(readUsers, Username, func(a User, b string) int { return cmp.Compare(a.Username, b) })
-	if !found {
-		fmt.Printf("DeleteUser:%v does not exist\n", Username)
+	if len(readUsers) == 0 {
 		return false
-	}
-	// sortSlice(readUsers, "./Static/JsonData/Users.json")
-	userIndex, found := slices.BinarySearchFunc(readUsers, LogInData, func(i, j User) int {
-		return cmp.Compare(i.Username, j.Username)
-	})
+	} else if len(readUsers) == 1 {
+		if readUsers[0].Username == Username {
+			userIndex = 0
+		}
+	} else {
+		_, found := slices.BinarySearchFunc(readUsers, Username, func(a User, b string) int { return cmp.Compare(a.Username, b) })
+		if !found {
+			fmt.Printf("DeleteUser:%v does not exist\n", Username)
+			return false
+		}
+		// sortSlice(readUsers, "./Static/JsonData/Users.json")
+		userIndex, found = slices.BinarySearchFunc(readUsers, LogInData, func(i, j User) int {
+			return cmp.Compare(i.Username, j.Username)
+		})
 
-	if !found {
-		return false
+		if !found {
+			return false
+		}
 	}
-	newSlice := make([]User, 0)
-	newSlice = append(newSlice, readUsers[:userIndex]...)
-	newSlice = append(newSlice, readUsers[userIndex+1:]...)
-	ConvertToJson(newSlice, filepath)
+	readUsers = slices.Delete(readUsers, userIndex, userIndex)
+	ConvertToJson(readUsers, filepath)
 	return true
 }
 

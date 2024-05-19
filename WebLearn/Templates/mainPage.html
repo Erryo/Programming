@@ -12,19 +12,19 @@
   </head>
   <body>
     <div class="side">
-      <button type="Button" class="sideButton">
-        <i class="fa fa-chain"></i> Link
-      </button>
-      <button type="Button" class="sideButton" onclick='changeURL("/Schedule")'>
-        <i class="fa fa-th-list"></i> Orar
-      </button>
-      <button
-        type="Button"
-        class="sideButton"
-        onclick="changeURL('/TicTacToe')"
+      <a class="sideButton" href="/TicTacToe">
+        <i class="fa fa-angellist"></i> TTT</a
       >
-        <i class="fa fa-angellist"></i> TTT
-      </button>
+      <a class="sideButton" href="/Schedule"
+        ><i class="fa fa-th-list"> </i>Schedule</a
+      >
+      <a class="sideButton" href="/Links"><i class="fa fa-chain"></i> Links</a>
+      <a class="sideButton" href="/LogOut"
+        ><i class="fa fa-arrow-circle-o-left"></i> LogOut</a
+      >
+      <a class="sideButton" href="/DeleteMe"
+        ><i class="fa fa-eraser"></i> DeleteMe</a
+      >
     </div>
     <div class="greeter">
       <h1>
@@ -40,7 +40,5 @@
         >, welcome to Infy's Universe
       </h1>
     </div>
-
-    <script src="/Static/JavaScript/mainPage.js"></script>
   </body>
 </html>

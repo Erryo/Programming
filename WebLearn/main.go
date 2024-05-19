@@ -31,9 +31,6 @@ func SubmitLogInHandler(w http.ResponseWriter, r *http.Request) {
 	LogInData.Username = r.FormValue("Username")
 	LogInData.Password = r.FormValue("Password")
 
-	Monday := []string{"Math", "Litera", "Art", "P.E."}
-	LogInData.Subjects = Monday
-
 	fmt.Println("U: ", LogInData.Username)
 	fmt.Println("P: ", LogInData.Password)
 	var is_valid bool = CheckData(LogInData, "./Static/JsonData/Users.json")
@@ -113,8 +110,8 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 			HtmlHandler(w, r, "./Templates/mainPage.html", "mainPage.html", LogInData)
 		case "/LogIn":
 			fmt.Println("LogIn Cookie Yes")
-			http.Redirect(w, r, "/mainPage", http.StatusMovedPermanently)
-			// http.Handle("/css/", http.FileServer(http.Dir("./")))
+			http.Redirect(w, r, "/mainPage", http.StatusPermanentRedirect)
+		// http.Handle("/css/", http.FileServer(http.Dir("./")))
 		case "/Submit/LogIn":
 			LogInErr.Error = ""
 			SubmitLogInHandler(w, r)
@@ -126,11 +123,10 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 		case "/Register":
 			RegisterHandler(w, r)
 		case "/DeleteMe":
+			fmt.Println("Detele User")
 			DeleteUser(LogInData.Username, "./Static/JsonData/Users.json")
-			http.Redirect(w, r, "/LogOut", http.StatusMovedPermanently)
+			http.Redirect(w, r, "/LogOut", http.StatusFound)
 		case "/Schedule":
-			//		Monday := []string{"Math", "Litera", "Art", "P.E."}
-			//		LogInData.Schedule = append(LogInData.Schedule, Monday)
 			fmt.Println("/Schedule casse")
 			HtmlHandler(w, r, "./Templates/schedule.html", "schedule.html", LogInData)
 		case "/LogOut":
@@ -145,9 +141,11 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		switch r.URL.Path {
+		case "/":
+			http.Redirect(w, r, "/LogIn", http.StatusFound)
 		case "/mainPage":
 			LogInErr.Error = ""
-			http.Redirect(w, r, "/LogIn", http.StatusMovedPermanently)
+			http.Redirect(w, r, "/LogIn", http.StatusFound)
 		case "/LogIn":
 			HtmlHandler(w, r, "./Templates/logIn.html", "logIn.html", LogInErr)
 			// http.Handle("/css/", http.FileServer(http.Dir("./")))
@@ -166,7 +164,7 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/LogIn", http.StatusNotModified)
 		default:
 			LogInErr.Error = ""
-			// http.Redirect(w, r, "/LogIn", http.StatusMovedPermanently)
+			http.Redirect(w, r, "/LogIn", http.StatusMovedPermanently)
 			HtmlHandler(w, r, "./Templates/notFound.html", "notFound.html", nil)
 			// http.Handle(r.URL.Path, http.FileServer(http.Dir("./")))
 

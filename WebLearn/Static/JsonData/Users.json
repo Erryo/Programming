@@ -2,12 +2,7 @@
  {
   "Username": "Infy",
   "Password": "uJK19A",
-  "Subjects": [
-   "Math",
-   "Litera",
-   "Art",
-   "P.E."
-  ],
+  "Subjects": null,
   "Schedule": null
  }
 ]

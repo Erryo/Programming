@@ -41,6 +41,7 @@ func Read(r *http.Request, name string) string {
 }
 
 func SetLoggedCookie(w http.ResponseWriter, r *http.Request, Value string) {
+	fmt.Println("Setting cookieValue: ", Value, "   :By : ", r.Referer())
 	cookie := http.Cookie{
 		Name:     "UserStatus",
 		Value:    Value,
@@ -49,6 +50,12 @@ func SetLoggedCookie(w http.ResponseWriter, r *http.Request, Value string) {
 		HttpOnly: true,
 	}
 	// fmt.Println("SetLoggedCookie:secretKey: ", secretKey)
+	if Value == "nil" {
+		cookie.Value = ""
+		cookie.MaxAge = -1
+		WriteCookie(w, cookie)
+		return
+	}
 
 	mac := hmac.New(sha256.New, secretKey)
 	mac.Write([]byte(cookie.Name))
