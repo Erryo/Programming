@@ -128,7 +128,17 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/LogOut", http.StatusFound)
 		case "/Schedule":
 			fmt.Println("/Schedule casse")
-			HtmlHandler(w, r, "./Templates/schedule.html", "schedule.html", LogInData)
+			readUsers := GetJson("./Static/JsonData/Users.json")
+
+			userIndex, found := slices.BinarySearchFunc(readUsers, LogInData, func(a, b User) int {
+				return cmp.Compare(a.Username, b.Username)
+			})
+			if found {
+				HtmlHandler(w, r, "./Templates/schedule.html", "schedule.html", readUsers[userIndex])
+			} else {
+				fmt.Println("/Schedule: error user not found")
+				HtmlHandler(w, r, "./Templates/schedule.html", "schedule.html", LogInData)
+			}
 		case "/LogOut":
 			SetLoggedCookie(w, r, "nil")
 			HtmlHandler(w, r, "./Templates/logIn.html", "logIn.html", LogInErr)

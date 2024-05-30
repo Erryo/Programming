@@ -3,9 +3,7 @@ function SubForm() {
     url: "/Submit/AddSubject",
     type: "POST",
     data: $("#myForm").serialize(),
-    success: function () {
-      alert("aa");
-    },
+    success: function () {},
   });
   console.log(document.getElementById("SubjField").value);
 }

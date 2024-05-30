@@ -29,12 +29,9 @@
       <div style="height: 250px" class="wrapper" id="ListOfSubjects">
         <h2 class="SectionH">List of Subjects</h2>
         <ul>
-          <li>Lorem ipsum dolor.</li>
-          <li>Lorem ipsum dolor.</li>
-          <li>Lorem ipsum dolor.</li>
-          <li>Lorem ipsum dolor.</li>
-          <li>cillum sint consectetur cupidatat.</li>
-          <li>cillum sint consectetur cupidatat.</li>
+          {{range .Subjects}}
+          <li>{{print .}}</li>
+          {{end}}
         </ul>
       </div>
     </div>
@@ -42,7 +39,6 @@
       <div class="day">
         <h2 class="SectionH">Monday</h2>
       </div>
-      {{range .Schedule}} {{end}}
     </div>
     <script
       rel="javascript"
