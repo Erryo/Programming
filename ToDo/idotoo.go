@@ -81,19 +81,18 @@ func displayHelp() {
 }
 
 func showList() {
-	fmt.Println("<--------IDoToo-------->")
 	var longest int
 	tasks := readFile()
 	cYear, cMonth, cDay := time.Now().Date()
-
-	for index, value := range tasks {
-		var elapsed string
-		var space string
-
+	for _, value := range tasks {
 		if len(value.Value) > longest {
 			longest = len(value.Value)
 		}
-		space = strings.Repeat(" ", longest-len(value.Value))
+	}
+	fmt.Printf("<-%vIDoToo%v-->\n", strings.Repeat("-", (longest-5)/2), strings.Repeat("-", (longest-4)/2))
+	for index, value := range tasks {
+		var elapsed string
+		space := strings.Repeat(" ", longest-len(value.Value))
 
 		vYear, vMonth, vDay := value.Status.Date()
 		eYear := int(cYear) - int(vYear)
@@ -121,7 +120,7 @@ func showList() {
 
 		fmt.Printf("%v| %v %v|%v\n", index, value.Value, space, elapsed)
 	}
-	fmt.Println("<--------IDidDo-------->")
+	fmt.Printf("<-%vIDidDo%v-->\n", strings.Repeat("-", (longest-4)/2), strings.Repeat("-", (longest-4)/2))
 }
 
 func addToDo() {
