@@ -1,7 +1,10 @@
 package main
 
 import (
-	"fmt"
+	"math/rand"
+	"time"
+
+	"seehuhn.de/go/ncurses"
 )
 
 const (
@@ -9,16 +12,19 @@ const (
 	H = 20
 )
 
-var DIR [][2]int
+var (
+	DIR [][2]int
+	win *ncurses.Window
+)
 
 func genGrid() [H][W]bool {
 	var grid [H][W]bool
 	for i := 0; i < H; i++ {
 		for j := 0; j < W; j++ {
-			// if rand.Intn(100) < 25 {
-			// 	grid[i][j] = true
-			// 	continue
-			// }
+			if rand.Intn(100) < 25 {
+				grid[i][j] = true
+				continue
+			}
 			grid[i][j] = false
 		}
 	}
@@ -37,19 +43,27 @@ func genGrid() [H][W]bool {
 }
 
 func drawGrid(grid [H][W]bool) {
-	fmt.Println("                                      -------------------")
+	// fmt.Println("                                      -------------------")
+	win.Move(0, 0)
+	win.Println("Conway's Game of Life")
 	for _, col := range grid {
-		fmt.Print("                                      ")
+		// fmt.Print("                                      ")
+		win.Print("                                      ")
 		for _, val := range col {
 			if val {
-				fmt.Print("■")
+				// fmt.Print("■")
+				win.Print("■")
 			} else {
-				fmt.Print("□")
+				// fmt.Print("□")
+				win.Print("□")
 			}
-			fmt.Print(" ")
+			// fmt.Print(" ")
+			win.Print(" ")
 		}
-		fmt.Println("")
+		// fmt.Println("")
+		win.Println("")
 	}
+	win.Refresh()
 }
 
 func evolve(grid *[H][W]bool) {
@@ -94,15 +108,14 @@ func evolve(grid *[H][W]bool) {
 }
 
 func main() {
+	win = ncurses.Init()
 	grid := genGrid()
-	grid[10][10] = true
-	grid[9][10] = true
-	grid[10][9] = true
-	grid[11][10] = true
-	grid[11][11] = true
-	for i := 0; i < 19; i++ {
+	for i := 0; i < 100; i++ {
+
+		time.Sleep(time.Second / 4)
 		drawGrid(grid)
 		evolve(&grid)
 		drawGrid(grid)
 	}
+	ncurses.EndWin()
 }
