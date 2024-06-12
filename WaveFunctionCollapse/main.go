@@ -21,7 +21,7 @@ const (
 	DOWN  string = "┬"
 	LEFT  string = "┤"
 	EMPTY string = "▒"
-	NULL  string = "□"
+	NULL  string = " "
 )
 
 var win ncurses.Window = *ncurses.Init()
@@ -71,7 +71,8 @@ func drawGrid(grid [H][W]Tile) {
 				win.Print(val.icon)
 				//			fmt.Print(val.icon)
 			} else {
-				win.Print(val.entropy)
+				win.Print(val.icon)
+				// win.Print(val.entropy)
 				//			fmt.Print(val.entropy)
 			}
 
