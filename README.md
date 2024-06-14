@@ -9,7 +9,7 @@ This repository contains all the projects and side projects I create. Its purpos
 
 ## Installation
 
-This repository is not meant to be installed. But if you would kine to use the code, simply clone the repository:
+This repository is not meant to be installed. But if you would like to use the code, simply clone the repository:
 ```sh
 git clone https://github.com/Erryo/Programming.git
 ```
