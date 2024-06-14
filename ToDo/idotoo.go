@@ -81,7 +81,7 @@ func displayHelp() {
 }
 
 func showList() {
-	var longest int
+	var longest int = 5
 	tasks := readFile()
 	cYear, cMonth, cDay := time.Now().Date()
 	for _, value := range tasks {
