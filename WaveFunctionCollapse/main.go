@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
+	"time"
 
 	"seehuhn.de/go/ncurses"
 )
@@ -10,7 +12,16 @@ type Tile struct {
 	icon    string // UP DOWN LEFT RIGHT EMPTY
 	race    string // "up" "down" "left" "right" "empty" "null"
 	entropy uint8
-	posb    []string // UP DOWN LEFT RIGHT EMPTY
+	posb    []BaseTile // UP DOWN LEFT RIGHT EMPTY
+}
+
+type BaseTile struct {
+	Name  string
+	Icon  string
+	North []string // Not allowed
+	East  []string
+	South []string
+	West  []string
 }
 
 const (
@@ -26,13 +37,58 @@ const (
 
 var win ncurses.Window = *ncurses.Init()
 
+var baseUp BaseTile = BaseTile{
+	Name:  "up",
+	Icon:  UP,
+	North: []string{UP, EMPTY},
+	East:  []string{RIGHT, EMPTY},
+	South: []string{UP, LEFT, RIGHT},
+	West:  []string{LEFT, EMPTY},
+}
+
+var baseRight BaseTile = BaseTile{
+	Name:  "right",
+	Icon:  RIGHT,
+	North: []string{UP, EMPTY},
+	East:  []string{RIGHT, EMPTY},
+	South: []string{DOWN, EMPTY},
+	West:  []string{UP, DOWN, RIGHT},
+}
+
+var baseDown BaseTile = BaseTile{
+	Name:  "down",
+	Icon:  DOWN,
+	North: []string{RIGHT, LEFT, DOWN},
+	East:  []string{EMPTY, RIGHT},
+	South: []string{DOWN, EMPTY},
+	West:  []string{LEFT, EMPTY},
+}
+
+var baseLeft BaseTile = BaseTile{
+	Name:  "left",
+	Icon:  LEFT,
+	North: []string{UP, EMPTY},
+	East:  []string{LEFT, UP, DOWN},
+	South: []string{DOWN, EMPTY},
+	West:  []string{LEFT, EMPTY},
+}
+
+var baseEmpty BaseTile = BaseTile{
+	Name:  "empty",
+	Icon:  EMPTY,
+	North: []string{LEFT, RIGHT, DOWN},
+	East:  []string{UP, LEFT, DOWN},
+	South: []string{UP, RIGHT, LEFT},
+	West:  []string{DOWN, UP, RIGHT},
+}
+
 func removeElems(elems []string, tile *Tile) {
 	array := tile.posb[:0]
 	var shouldDelete bool
 	for _, v1 := range tile.posb {
 		shouldDelete = false
 		for _, v2 := range elems {
-			if v1 == v2 {
+			if v1.Icon == v2 {
 				shouldDelete = true
 				tile.entropy -= 1
 				break
@@ -53,7 +109,7 @@ func genGrid() [H][W]Tile {
 				icon:    NULL,
 				race:    "null",
 				entropy: 5,
-				posb:    []string{UP, RIGHT, DOWN, LEFT, EMPTY},
+				posb:    []BaseTile{baseUp, baseRight, baseDown, baseLeft, baseEmpty},
 			}
 		}
 	}
@@ -71,8 +127,8 @@ func drawGrid(grid [H][W]Tile) {
 				win.Print(val.icon)
 				//			fmt.Print(val.icon)
 			} else {
-				win.Print(val.icon)
-				// win.Print(val.entropy)
+				// win.Print(val.icon)
+				win.Print(val.entropy)
 				//			fmt.Print(val.entropy)
 			}
 
@@ -95,91 +151,27 @@ func collapseTile(grid *[H][W]Tile, x, y int) {
 		var icon string
 
 		icon_ind := rand.Intn(int(grid[y][x].entropy))
-		switch grid[y][x].posb[icon_ind] {
-		case UP:
-			icon = UP
-			name = "up"
-			if y > 0 {
-				removeElems([]string{UP, EMPTY}, &grid[y-1][x])
-			}
-			if y < H-1 {
-				removeElems([]string{UP, RIGHT, LEFT}, &grid[y+1][x])
-			}
-			if x > 0 {
-				removeElems([]string{LEFT, EMPTY}, &grid[y][x-1])
-			}
-			if x < W-1 {
-				removeElems([]string{EMPTY, RIGHT}, &grid[y][x+1])
-			}
-		case RIGHT:
-			icon = RIGHT
-			name = "right"
-			if y > 0 {
-				removeElems([]string{UP, EMPTY}, &grid[y-1][x])
-			}
-			if y < H-1 {
-				removeElems([]string{EMPTY, DOWN}, &grid[y+1][x])
-			}
-			if x > 0 {
-				removeElems([]string{RIGHT, UP, DOWN}, &grid[y][x-1])
-			}
-			if x < W-1 {
-				removeElems([]string{EMPTY, RIGHT}, &grid[y][x+1])
-			}
-		case DOWN:
-			icon = DOWN
-			name = "down"
-			if y > 0 {
-				removeElems([]string{RIGHT, LEFT, DOWN}, &grid[y-1][x])
-			}
-			if y < H-1 {
-				removeElems([]string{DOWN, EMPTY}, &grid[y+1][x])
-			}
-			if x > 0 {
-				removeElems([]string{LEFT, EMPTY}, &grid[y][x-1])
-			}
-			if x < W-1 {
-				removeElems([]string{EMPTY, RIGHT}, &grid[y][x+1])
-			}
-
-		case LEFT:
-			icon = LEFT
-			name = "left"
-
-			if y > 0 {
-				removeElems([]string{UP, EMPTY}, &grid[y-1][x])
-			}
-			if y < H-1 {
-				removeElems([]string{DOWN, EMPTY}, &grid[y+1][x])
-			}
-			if x > 0 {
-				removeElems([]string{LEFT, EMPTY}, &grid[y][x-1])
-			}
-			if x < W-1 {
-				removeElems([]string{LEFT, UP, DOWN}, &grid[y][x+1])
-			}
-		case EMPTY:
-			icon = EMPTY
-			name = "empty"
-			if y > 0 {
-				removeElems([]string{DOWN, LEFT, RIGHT}, &grid[y-1][x])
-			}
-			if y < H-1 {
-				removeElems([]string{UP, RIGHT, LEFT}, &grid[y+1][x])
-			}
-			if x > 0 {
-				removeElems([]string{RIGHT, UP, DOWN}, &grid[y][x-1])
-			}
-			if x < W-1 {
-				removeElems([]string{LEFT, DOWN, UP}, &grid[y][x+1])
-			}
-
+		toAddtile := grid[y][x].posb[icon_ind]
+		icon = toAddtile.Icon
+		name = toAddtile.Name
+		if y > 0 {
+			removeElems(toAddtile.North, &grid[y-1][x])
 		}
+		if y < H-1 {
+			removeElems(toAddtile.South, &grid[y+1][x])
+		}
+		if x > 0 {
+			removeElems(toAddtile.West, &grid[y][x-1])
+		}
+		if x < W-1 {
+			removeElems(toAddtile.East, &grid[y][x+1])
+		}
+
 		var tile Tile = Tile{
 			icon:    icon,
 			race:    name,
 			entropy: 0,
-			posb:    []string{},
+			posb:    []BaseTile{},
 		}
 		grid[y][x] = tile
 		break
@@ -210,15 +202,20 @@ func findLowEntropy(grid [H][W]Tile) (bool, int, int) {
 }
 
 func main() {
+	start := time.Now()
 	_, width := win.GetMaxYX()
 	win.Move(0, (width/2)-20)
 	win.Println("Welcome to Wave Function Collapse World")
 
 	//arr := []string{UP, RIGHT, DOWN, LEFT, EMPTY}
-	//for _, v := range arr {
-	//	win.Println(" " + v)
-	//	win.Println(v + RIGHT + v)
-	//	win.Println(" " + v)
+	//for _, t := range arr {
+	//	fmt.Println("----------------")
+	//	for _, v := range arr {
+	//		fmt.Println(" " + v)
+	//		fmt.Println(v + t + v)
+	//		fmt.Println(" " + v)
+	//		fmt.Println("-___-___-___-")
+	//	}
 	//}
 
 	var done bool
@@ -236,10 +233,8 @@ func main() {
 		}
 		win.Move(0, (width/2)-20)
 		win.Println("X: ", x, "Y:", y)
-		win.Println(grid[y][x])
+		win.Println(grid[y][x].icon)
 	}
-
-	win.Readline(0)
-
 	ncurses.EndWin()
+	fmt.Println(time.Since(start))
 }
