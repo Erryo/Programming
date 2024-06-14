@@ -26,8 +26,8 @@ type BaseTile struct {
 }
 
 const (
-	W          int    = 40
-	H          int    = 20
+	W          int    = 60
+	H          int    = 60
 	UP         string = "┴"
 	RIGHT      string = "├"
 	DOWN       string = "┬"
@@ -43,92 +43,92 @@ const (
 var win ncurses.Window = *ncurses.Init()
 
 var baseUp BaseTile = BaseTile{
-	Name:   "up",
+	Name:   "UP",
 	Icon:   UP,
-	North:  []string{UP, EMPTY},
-	East:   []string{RIGHT, EMPTY},
-	South:  []string{UP, LEFT, RIGHT},
-	West:   []string{LEFT, EMPTY},
+	North:  []string{UP, EMPTY, UP_LEFT, UP_LEFT},
+	East:   []string{RIGHT, EMPTY, UP_RIGHT, DOWN_RIGHT},
+	South:  []string{UP, LEFT, RIGHT, UP_LEFT, UP_LEFT},
+	West:   []string{LEFT, EMPTY, UP_LEFT, DOWN_LEFT},
 	Pixels: [8]bool{false, true, false, true, false, false, false, true},
 }
 
 var baseRight BaseTile = BaseTile{
-	Name:   "right",
+	Name:   "RIGHT",
 	Icon:   RIGHT,
-	North:  []string{UP, EMPTY},
-	East:   []string{RIGHT, EMPTY},
-	South:  []string{DOWN, EMPTY},
-	West:   []string{UP, DOWN, RIGHT},
+	North:  []string{UP, EMPTY, UP_RIGHT, UP_LEFT},
+	East:   []string{RIGHT, EMPTY, UP_RIGHT, DOWN_RIGHT},
+	South:  []string{DOWN, EMPTY, DOWN_RIGHT, DOWN_LEFT},
+	West:   []string{UP, DOWN, RIGHT, DOWN, UP_RIGHT, DOWN_RIGHT},
 	Pixels: [8]bool{false, true, false, true, false, true, false, false},
 }
 
 var baseDown BaseTile = BaseTile{
-	Name:   "down",
+	Name:   "DOWN",
 	Icon:   DOWN,
-	North:  []string{RIGHT, LEFT, DOWN},
-	East:   []string{EMPTY, RIGHT},
-	South:  []string{DOWN, EMPTY},
-	West:   []string{LEFT, EMPTY},
+	North:  []string{RIGHT, LEFT, DOWN, DOWN_LEFT, DOWN_RIGHT},
+	East:   []string{EMPTY, RIGHT, UP_RIGHT, DOWN_RIGHT},
+	South:  []string{DOWN, EMPTY, DOWN_RIGHT, DOWN_LEFT},
+	West:   []string{LEFT, EMPTY, UP_LEFT, DOWN_LEFT},
 	Pixels: [8]bool{false, false, false, true, false, true, false, true},
 }
 
 var baseLeft BaseTile = BaseTile{
-	Name:   "left",
+	Name:   "LEFT",
 	Icon:   LEFT,
-	North:  []string{UP, EMPTY},
-	East:   []string{LEFT, UP, DOWN},
-	South:  []string{DOWN, EMPTY},
-	West:   []string{LEFT, EMPTY},
+	North:  []string{UP, EMPTY, UP_RIGHT, UP_LEFT},
+	East:   []string{LEFT, UP, DOWN, UP_LEFT, DOWN_LEFT},
+	South:  []string{DOWN, EMPTY, DOWN_RIGHT, DOWN_LEFT},
+	West:   []string{LEFT, EMPTY, UP_LEFT, DOWN_LEFT},
 	Pixels: [8]bool{false, true, false, false, false, true, false, true},
 }
 
 var baseEmpty BaseTile = BaseTile{
-	Name:   "empty",
+	Name:   "EMPTY",
 	Icon:   EMPTY,
-	North:  []string{LEFT, RIGHT, DOWN},
-	East:   []string{UP, LEFT, DOWN},
-	South:  []string{UP, RIGHT, LEFT},
-	West:   []string{DOWN, UP, RIGHT},
+	North:  []string{LEFT, RIGHT, DOWN, DOWN_RIGHT, DOWN_LEFT},
+	East:   []string{UP, LEFT, DOWN, UP_LEFT, DOWN_LEFT},
+	South:  []string{UP, RIGHT, LEFT, UP_RIGHT, UP_LEFT},
+	West:   []string{DOWN, UP, RIGHT, UP_RIGHT, DOWN_RIGHT},
 	Pixels: [8]bool{false, false, false, false, false, false, false, false},
 }
 
 var baseUpRight BaseTile = BaseTile{
-	Name:   "up_right",
+	Name:   "UP_RIGHT",
 	Icon:   UP_RIGHT,
-	North:  []string{},
-	East:   []string{},
-	South:  []string{},
-	West:   []string{},
+	North:  []string{UP, EMPTY, UP_RIGHT, UP_LEFT},
+	East:   []string{RIGHT, EMPTY, UP_RIGHT, DOWN_RIGHT},
+	South:  []string{UP, RIGHT, LEFT, UP_RIGHT, UP_LEFT},
+	West:   []string{UP, RIGHT, DOWN, UP_RIGHT, DOWN_RIGHT},
 	Pixels: [8]bool{false, true, false, true, false, false, false, false},
 }
 
 var baseUpLeft BaseTile = BaseTile{
-	Name:   "up_left",
+	Name:   "UP_LEFT",
 	Icon:   UP_LEFT,
-	North:  []string{},
-	East:   []string{},
-	South:  []string{},
-	West:   []string{},
+	North:  []string{UP, EMPTY, UP_RIGHT, UP_LEFT},
+	East:   []string{UP, DOWN, LEFT, UP_LEFT, DOWN_LEFT},
+	South:  []string{UP, RIGHT, LEFT, UP_RIGHT, UP_LEFT},
+	West:   []string{LEFT, EMPTY, UP_LEFT, DOWN_LEFT},
 	Pixels: [8]bool{false, true, false, false, false, false, false, true},
 }
 
 var baseDownRight BaseTile = BaseTile{
-	Name:   "down_right",
+	Name:   "DOWN_RIGHT",
 	Icon:   DOWN_RIGHT,
-	North:  []string{},
-	East:   []string{},
-	South:  []string{},
-	West:   []string{},
+	North:  []string{RIGHT, DOWN, LEFT, DOWN_RIGHT, DOWN_LEFT},
+	East:   []string{RIGHT, EMPTY, UP_RIGHT, DOWN_RIGHT},
+	South:  []string{DOWN, EMPTY, DOWN_RIGHT, DOWN_LEFT},
+	West:   []string{UP, RIGHT, DOWN, UP_RIGHT, DOWN_RIGHT},
 	Pixels: [8]bool{false, false, false, true, false, true, false, false},
 }
 
 var baseDownLeft BaseTile = BaseTile{
-	Name:   "down_left",
+	Name:   "DOWN_LEFT",
 	Icon:   DOWN_LEFT,
-	North:  []string{},
-	East:   []string{},
-	South:  []string{},
-	West:   []string{},
+	North:  []string{RIGHT, DOWN, LEFT, DOWN_RIGHT, DOWN_LEFT},
+	East:   []string{UP, DOWN, LEFT, UP_LEFT, DOWN_LEFT},
+	South:  []string{DOWN, EMPTY, DOWN_RIGHT, DOWN_LEFT},
+	West:   []string{LEFT, EMPTY, UP_LEFT, DOWN_LEFT},
 	Pixels: [8]bool{false, false, false, false, false, true, false, true},
 }
 
@@ -163,8 +163,8 @@ func genGrid() [H][W]Tile {
 			grid[i][j] = Tile{
 				icon:    NULL,
 				race:    "null",
-				entropy: 5,
-				posb:    []BaseTile{baseUp, baseRight, baseDown, baseLeft, baseEmpty},
+				entropy: 9,
+				posb:    []BaseTile{baseUp, baseRight, baseDown, baseLeft, baseEmpty, baseUpRight, baseUpLeft, baseDownLeft, baseDownRight},
 			}
 		}
 	}
@@ -180,18 +180,13 @@ func drawGrid(grid [H][W]Tile) {
 		for _, val := range row {
 			if val.race != "null" {
 				win.Print(val.icon)
-				//			fmt.Print(val.icon)
 			} else {
-				// win.Print(val.icon)
-				win.Print(val.entropy)
-				//			fmt.Print(val.entropy)
+				win.Print(val.icon)
 			}
 
 			win.Refresh()
-			// time.Sleep(time.Second / 50)
 		}
 		win.Println("")
-		// fmt.Println("")
 		win.Move((height/2)+i+1, width/2)
 	}
 }
@@ -230,12 +225,11 @@ func collapseTile(grid *[H][W]Tile, x, y int) {
 		posb:    []BaseTile{},
 	}
 	grid[y][x] = tile
-	return
 }
 
 func findLowEntropy(grid [H][W]Tile) (bool, int, int) {
 	var done bool = true
-	var entropy uint8 = 5
+	var entropy uint8 = 9
 	y, x := 0, 0
 
 	for i, row := range grid {
@@ -263,46 +257,26 @@ func findLowEntropy(grid [H][W]Tile) (bool, int, int) {
 func main() {
 	start := time.Now()
 	_, width := win.GetMaxYX()
-	win.Move(0, (width/2)-20)
-	win.Println("Welcome to Wave Function Collapse World")
 
+	var done bool
+	grid := genGrid()
+	x := rand.Intn(W)
+	y := rand.Intn(H)
+
+	for i := 1; i > 0; i++ {
+
+		collapseTile(&grid, x, y)
+		drawGrid(grid)
+		done, y, x = findLowEntropy(grid)
+		if done {
+			break
+		}
+		win.Move(0, (width/2)-20)
+		win.Println("X: ", x, "Y:", y)
+
+		win.Println(time.Since(start))
+	}
+	win.Readline(0)
 	ncurses.EndWin()
-	//arr := []string{UP, RIGHT, DOWN, LEFT, EMPTY, UP_RIGHT, UP_LEFT, DOWN_RIGHT, DOWN_LEFT}
-	//for _, t := range arr {
-	//	fmt.Println("----------------")
-	//	for _, v := range arr {
-	//		fmt.Println(" " + v)
-	//		fmt.Println(v + t + v)
-	//		fmt.Println(" " + v)
-	//		fmt.Println("\n")
-	//	}
-	//}
-	testTile()
-	fmt.Println(baseDown)
-	fmt.Println("")
-	fmt.Println(baseUp)
-	fmt.Println("")
-	fmt.Println(baseLeft)
-	fmt.Println("")
-	fmt.Println(baseRight)
-	fmt.Println("")
-	// var done bool
-	// grid := genGrid()
-	// x := rand.Intn(W)
-	// y := rand.Intn(H)
-
-	// for i := 1; i > 0; i++ {
-
-	//	collapseTile(&grid, x, y)
-	//	drawGrid(grid)
-	//	done, y, x = findLowEntropy(grid)
-	//	if done {
-	//		break
-	//	}
-	//	win.Move(0, (width/2)-20)
-	//	win.Println("X: ", x, "Y:", y)
-	//	win.Println(time.Since(start))
-	//}
-	//ncurses.EndWin()
 	fmt.Println(time.Since(start))
 }

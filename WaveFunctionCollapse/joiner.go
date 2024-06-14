@@ -49,16 +49,16 @@ func testTile() {
 			var downSide bool = getSide(v, v1, 4, 7, 0, 3)  // Bot Top
 			var leftSide bool = getSide(v, v1, 6, 9, 2, 5)  //
 			if !upSide {
-				v.North = append(v.North, v1.Icon)
+				v.North = append(v.North, v1.Name)
 			}
 			if !rightSide {
-				v.East = append(v.East, v1.Icon)
+				v.East = append(v.East, v1.Name)
 			}
 			if !downSide {
-				v.South = append(v.South, v1.Icon)
+				v.South = append(v.South, v1.Name)
 			}
 			if !leftSide {
-				v.West = append(v.West, v1.Icon)
+				v.West = append(v.West, v1.Name)
 			}
 			//	fmt.Println(v.North, v.East, v.South, v.West)
 			//	fmt.Println("")
