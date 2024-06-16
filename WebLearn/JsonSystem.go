@@ -11,7 +11,7 @@ import (
 func DeleteUser(Username string, filepath string) bool {
 	fmt.Println("DeleteUser: ", Username, " started")
 	var userIndex int
-	readUsers := GetJson("./Static/JsonData/Users.json")
+	readUsers := GetJson(filepath)
 	if len(readUsers) == 0 {
 		return false
 	} else if len(readUsers) == 1 {
@@ -24,9 +24,8 @@ func DeleteUser(Username string, filepath string) bool {
 			fmt.Printf("DeleteUser:%v does not exist\n", Username)
 			return false
 		}
-		// sortSlice(readUsers, "./Static/JsonData/Users.json")
-		userIndex, found = slices.BinarySearchFunc(readUsers, LogInData, func(i, j User) int {
-			return cmp.Compare(i.Username, j.Username)
+		userIndex, found = slices.BinarySearchFunc(readUsers, Username, func(i User, j string) int {
+			return cmp.Compare(i.Username, j)
 		})
 
 		if !found {

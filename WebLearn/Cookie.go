@@ -1,11 +1,13 @@
 package main
 
 import (
+	"cmp"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
 	"net/http"
+	"slices"
 )
 
 var secretKey []byte
@@ -18,6 +20,7 @@ func WriteCookie(w http.ResponseWriter, cookie http.Cookie) {
 	if len(cookie.String()) < 4096 {
 		// Write the cookie as normal.
 		http.SetCookie(w, &cookie)
+		fmt.Println("COk val", cookie.Value, w.Header())
 	}
 }
 
@@ -43,13 +46,10 @@ func Read(r *http.Request, name string) string {
 func SetLoggedCookie(w http.ResponseWriter, r *http.Request, Value string) {
 	fmt.Println("Setting cookieValue: ", Value, "   :By : ", r.Referer())
 	cookie := http.Cookie{
-		Name:     "UserStatus",
-		Value:    Value,
-		Path:     "/",
-		Secure:   true,
-		HttpOnly: true,
+		Name:  "UserStatus",
+		Value: Value,
+		Path:  "/",
 	}
-	// fmt.Println("SetLoggedCookie:secretKey: ", secretKey)
 	if Value == "nil" {
 		cookie.Value = ""
 		cookie.MaxAge = -1
@@ -69,7 +69,6 @@ func SetLoggedCookie(w http.ResponseWriter, r *http.Request, Value string) {
 func GetLoggedCookie(w http.ResponseWriter, r *http.Request) bool {
 	cookieValue := Read(r, "UserStatus")
 
-	// fmt.Println("GetLoggedCookie:cookieValue: ", cookieValue)
 	if cookieValue == "" {
 		return false
 	}
@@ -90,9 +89,12 @@ func GetLoggedCookie(w http.ResponseWriter, r *http.Request) bool {
 	if !hmac.Equal([]byte(signature), expectedSignature) {
 		return false
 	}
-	if LogInData.Username == "" {
-		return false
-	}
+	//if LogInData.Username == "" {
+	//	return false
+	//}
 	fmt.Println("GetLoggedCookie:designed value", value)
-	return value == LogInData.Username
+	// Check if value is in list of users
+	readUsers := GetJson(DIR_USER)
+	_, found := slices.BinarySearchFunc(readUsers, value, func(a User, b string) int { return cmp.Compare(a.Username, b) })
+	return found
 }
