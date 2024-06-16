@@ -43,14 +43,16 @@ func createUserTable(db *sql.DB) {
 	}
 }
 
-func insertUser(db *sql.DB, user User) {
+func insertUser(db *sql.DB, user User) bool {
 	query := `
     INSERT INTO IUuser(username,password)
     VALUES ($1,$2)`
 	err := db.QueryRow(query, user.Username, user.Password).Scan()
 	if err != nil {
+		return false
 		log.Print(err)
 	}
+	return true
 }
 
 func getUser(db *sql.DB, username string) string {

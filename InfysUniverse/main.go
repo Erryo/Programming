@@ -35,8 +35,10 @@ func SubmitLogInHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("User & Pass is valid")
 		SetLoggedCookie(w, r, user.Username)
 		http.Redirect(w, r, "/mainPage", http.StatusMovedPermanently)
+	} else if dbPass == "" {
+		http.Redirect(w, r, "/LogIn?r=2", http.StatusMovedPermanently)
 	} else {
-		http.Redirect(w, r, "/LogIn", http.StatusMovedPermanently)
+		http.Redirect(w, r, "/LogIn?r=1", http.StatusMovedPermanently)
 	}
 }
 
@@ -50,11 +52,15 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("U: ", user.Username)
 	fmt.Println("P: ", user.Password)
 
-	if len(user.Username) > 255 || len(user.Password) > 255 {
+	if len(user.Username) > 25 || len(user.Password) > 40 {
 		http.Redirect(w, r, "/LogIn", http.StatusMovedPermanently)
 		return
 	}
-	insertUser(db, user)
+	if !insertUser(db, user) {
+
+		http.Redirect(w, r, "/LogIn?r=3", http.StatusMovedPermanently)
+		return
+	}
 	http.Redirect(w, r, "/LogIn", http.StatusMovedPermanently)
 }
 
@@ -82,7 +88,12 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 	if found {
 		switch r.URL.Path {
 		case "/mainPage":
-			HtmlHandler(w, r, "./Templates/mainPage.html", "mainPage.html", nil)
+			password := getUser(db, username)
+			user := User{
+				Username: username,
+				Password: password,
+			}
+			HtmlHandler(w, r, "./Templates/mainPage.html", "mainPage.html", user)
 
 		case "/LogIn":
 			fmt.Println("LogIn Cookie Yes")
@@ -121,7 +132,17 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 		case "/mainPage":
 			http.Redirect(w, r, "/LogIn", http.StatusFound)
 		case "/LogIn":
-			HtmlHandler(w, r, "./Templates/logIn.html", "logIn.html", nil)
+			retry := r.URL.Query().Get("r")
+			var message string
+			switch retry {
+			case "1":
+				message = "Incorrect Password"
+			case "2":
+				message = "User Username"
+			case "3":
+				message = "User already Exists"
+			}
+			HtmlHandler(w, r, "./Templates/logIn.html", "logIn.html", message)
 		case "/LogOut":
 			SetLoggedCookie(w, r, "nil")
 			HtmlHandler(w, r, "./Templates/logIn.html", "logIn.html", nil)
