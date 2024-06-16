@@ -1,13 +1,11 @@
 package main
 
 import (
-	"cmp"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
 	"net/http"
-	"slices"
 )
 
 var secretKey []byte
@@ -20,7 +18,6 @@ func WriteCookie(w http.ResponseWriter, cookie http.Cookie) {
 	if len(cookie.String()) < 4096 {
 		// Write the cookie as normal.
 		http.SetCookie(w, &cookie)
-		fmt.Println("COk val", cookie.Value, w.Header())
 	}
 }
 
@@ -66,14 +63,14 @@ func SetLoggedCookie(w http.ResponseWriter, r *http.Request, Value string) {
 	WriteCookie(w, cookie)
 }
 
-func GetLoggedCookie(w http.ResponseWriter, r *http.Request) bool {
+func GetLoggedCookie(w http.ResponseWriter, r *http.Request) (string, bool) {
 	cookieValue := Read(r, "UserStatus")
 
 	if cookieValue == "" {
-		return false
+		return "", false
 	}
 	if len(cookieValue) < sha256.Size {
-		return false
+		return "", false
 	}
 	signature := cookieValue[:sha256.Size]
 	value := cookieValue[sha256.Size:]
@@ -87,14 +84,14 @@ func GetLoggedCookie(w http.ResponseWriter, r *http.Request) bool {
 	// in the cookie. If they match, we can be confident that the cookie name
 	// and value haven't been edited by the client.
 	if !hmac.Equal([]byte(signature), expectedSignature) {
-		return false
+		return "", false
 	}
-	//if LogInData.Username == "" {
-	//	return false
-	//}
+	if value == "" {
+		return "", false
+	}
 	fmt.Println("GetLoggedCookie:designed value", value)
 	// Check if value is in list of users
-	readUsers := GetJson(DIR_USER)
-	_, found := slices.BinarySearchFunc(readUsers, value, func(a User, b string) int { return cmp.Compare(a.Username, b) })
-	return found
+	//
+	password := getUser(db, value)
+	return value, password != ""
 }
