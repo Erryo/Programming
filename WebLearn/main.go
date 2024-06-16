@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	server = &http.Server{Addr: ":8080"}
+	server = &http.Server{Addr: ":8000"}
 	db     *sql.DB
 )
 
@@ -24,14 +24,14 @@ type User struct {
 func SubmitLogInHandler(w http.ResponseWriter, r *http.Request) {
 	user := User{
 		Username: r.FormValue("Username"),
-		Password: r.FormValue("Password"),
+		Password: Encrypt(r.FormValue("Password"), 9),
 	}
 
 	fmt.Println("U: ", user.Username)
 	fmt.Println("P: ", user.Password)
 
 	dbPass := getUser(db, user.Username)
-	if dbPass == Encrypt(user.Password, 9) {
+	if dbPass == user.Password {
 		fmt.Println("User & Pass is valid")
 		SetLoggedCookie(w, r, user.Username)
 		http.Redirect(w, r, "/mainPage", http.StatusMovedPermanently)
@@ -45,12 +45,11 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	user := User{
 		Username: r.FormValue("Username"),
-		Password: r.FormValue("Password"),
+		Password: Encrypt(r.FormValue("Password"), 9),
 	}
-
 	fmt.Println("U: ", user.Username)
 	fmt.Println("P: ", user.Password)
-	user.Password = Encrypt(user.Username, 9)
+
 	if len(user.Username) > 255 || len(user.Password) > 255 {
 		http.Redirect(w, r, "/LogIn", http.StatusMovedPermanently)
 		return
