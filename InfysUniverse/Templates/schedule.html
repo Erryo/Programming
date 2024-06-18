@@ -6,20 +6,35 @@
     <title>My School Schedule</title>
     <link href="/Static/Css/schedule.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
   </head>
   <body>
-    <div class="title">
-      <h1>{{.Username}}'s School Schedule</h1>
+    <div class="top-bar">
+      <div>
+        <a class="topButton" href="/mainPage"> <i class="fa fa-home"></i></a>
+      </div>
+      <div class="title">
+        <h1>{{.Username}}'s School Schedule</h1>
+      </div>
     </div>
     <div class="Subjects">
-      <div style="height: 250px" class="wrapper" id="ListOfSubjects">
+      <div class="wrapper" id="ListOfSubjects">
         <h2 class="SectionH">List of Subjects</h2>
         <ul>
           {{range .Subjects}}
-          <li>{{print .}}</li>
+          <li>
+            {{print .}}
+            <button type="button" class="delBut" onclick='DeleteSubj("{{.}}")'>
+              -
+            </button>
+          </li>
           {{end}}
+          <a id="last"></a>
         </ul>
-        <form class="addSubjects" id="myForm" method="POST">
+        <form class="addSubjects" id="myForm1" method="POST">
           <input
             type="text"
             id="SubjField"
@@ -28,13 +43,87 @@
             required
           />
 
-          <input type="button" name="AddSubj" value="+" onclick="SubForm()" />
+          <input
+            type="button"
+            id="AddSubj"
+            name="AddSubj"
+            value="+"
+            onclick="SubForm()"
+          />
         </form>
       </div>
     </div>
     <div class="wrapper">
       <div class="day">
-        <h2 class="SectionH">Monday</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Day</th>
+              <th>Name</th>
+              <th>L.No</th>
+              <th>Start Time</th>
+              <th>End Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{range .Schedule}}
+            <tr>
+              <td>{{print .Day}}</td>
+              <td>{{print .Name}}</td>
+              <td>{{print .Lno}}</td>
+              <td>{{print .StartTime}}</td>
+              <td>{{print .EndTime}}</td>
+            </tr>
+            {{end}}
+
+            <tr>
+              <form id="scheduleForm">
+                <td>
+                  <label for="Day"></label>
+                  <select name="Day">
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                    <option value="Sunday">Sunday</option>
+                  </select>
+                </td>
+                <td>
+                  <label for="Name"></label>
+                  <select name="Name">
+                    {{range .Subjects}}
+                    <option value="{{print .}}">{{print .}}</option>
+                    {{end}}
+                  </select>
+                </td>
+                <td>
+                  <label for="Lno"></label>
+                  <select name="Lno">
+                    <option value="1">1.</option>
+                    <option value="2">2.</option>
+                    <option value="3">3.</option>
+                    <option value="4">4.</option>
+                    <option value="5">5.</option>
+                    <option value="6">6.</option>
+                    <option value="7">7.</option>
+                    <option value="8">8.</option>
+                  </select>
+                </td>
+                <td>
+                  <input type="time" name="StartTime" value="" />
+                </td>
+                <td>
+                  <input type="time" name="EndTime" value="" />
+                </td>
+                <td>
+                  <button type="button" onclick="SendSchedule()">+</button>
+                </td>
+              </form>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
     <script

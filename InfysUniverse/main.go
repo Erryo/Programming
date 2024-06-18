@@ -18,7 +18,15 @@ type User struct {
 	Username string
 	Password string
 	Subjects []string
-	Schedule [][]string
+	Schedule []lesson
+}
+
+type lesson struct {
+	Day       string
+	Name      string
+	Lno       string
+	StartTime string
+	EndTime   string
 }
 
 func SubmitLogInHandler(w http.ResponseWriter, r *http.Request) {
@@ -80,9 +88,31 @@ func HtmlHandler(w http.ResponseWriter, r *http.Request, HtmlFile string, HtmlNa
 func SubmitAddSubject(w http.ResponseWriter, r *http.Request, username string) {
 	fmt.Println("SubmitAddSubject called")
 
+	if r.Method == http.MethodDelete {
+		subject := r.URL.Query().Get("S")
+		deleteUserToSubj(db, username, subject)
+		return
+	}
 	r.ParseForm()
 	subject := r.FormValue("Subject")
+
+	if len(subject) == 0 || subject == "" || subject == " " {
+		return
+	}
 	insertUserToSubj(db, username, subject)
+}
+
+func AddScheduleHandler(w http.ResponseWriter, r *http.Request, username string) {
+	r.ParseForm()
+	lesson := lesson{
+		Day:       r.FormValue("Day"),
+		Name:      r.FormValue("Name"),
+		Lno:       r.FormValue("Lno"),
+		StartTime: r.FormValue("StartTime"),
+		EndTime:   r.FormValue("EndTime"),
+	}
+	fmt.Println(lesson)
+	insertLesson(db, username, lesson)
 }
 
 func GeneralHandler(w http.ResponseWriter, r *http.Request) {
@@ -114,6 +144,7 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 			user := User{
 				Username: username,
 				Subjects: subjects,
+				Schedule: []lesson{},
 			}
 			HtmlHandler(w, r, "./Templates/schedule.html", "schedule.html", user)
 		case "/LogOut":
@@ -126,6 +157,8 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 		case "/Submit/AddSubject":
 			SubmitAddSubject(w, r, username)
 
+		case "/Submit/AddSchedule":
+			AddScheduleHandler(w, r, username)
 		default:
 			HtmlHandler(w, r, "./Templates/notFound.html", "notFound.html", nil)
 
@@ -146,6 +179,7 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 			HtmlHandler(w, r, "./Templates/logIn.html", "logIn.html", message)
 		case "/Submit/LogIn":
 			SubmitLogInHandler(w, r)
+
 		case "/Register":
 			RegisterHandler(w, r)
 

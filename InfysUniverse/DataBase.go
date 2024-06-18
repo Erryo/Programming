@@ -141,6 +141,17 @@ func insertUserToSubj(db *sql.DB, username, subject string) {
 	}
 }
 
+func deleteUserToSubj(db *sql.DB, username, subject string) {
+	log.Println("delete:", subject)
+	query := `
+    DELETE FROM UserToSubject WHERE username = $1 AND name = $2
+    `
+	_, err := db.Query(query, username, subject)
+	if err != nil {
+		log.Print(err)
+	}
+}
+
 func getUserSubj(db *sql.DB, username string) []string {
 	var subjects []string
 
@@ -163,4 +174,14 @@ func getUserSubj(db *sql.DB, username string) []string {
 		subjects = append(subjects, subject)
 	}
 	return subjects
+}
+
+func insertLesson(db *sql.DB, username string, lesson lesson) {
+	query := `
+    INSERT INTO lessons (day,starttime,endTime,lessonno,name)
+    VALUES ($1,$2,$3,$4,$5)`
+	_, err := db.Query(query, lesson.Day, lesson.StartTime, lesson.EndTime, lesson.Lno, lesson.Name)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
