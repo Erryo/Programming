@@ -30,3 +30,10 @@ function SendSchedule() {
     success: function () {},
   });
 }
+function DeleteLesson(id) {
+  console.log(id, "delete");
+  $.ajax({
+    url: "/Submit/AddSchedule?" + $.param({ Id: id }),
+    type: "DELETE",
+  });
+}

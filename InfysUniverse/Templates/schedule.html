@@ -67,12 +67,12 @@
           </thead>
           <tbody>
             {{range .Schedule}}
-            <tr>
               <td>{{print .Day}}</td>
               <td>{{print .Name}}</td>
               <td>{{print .Lno}}</td>
               <td>{{print .StartTime}}</td>
               <td>{{print .EndTime}}</td>
+            <td> <button type="button" class="delBut" onclick='DeleteLesson("{{.Id}}")'>-</button></td>
             </tr>
             {{end}}
 

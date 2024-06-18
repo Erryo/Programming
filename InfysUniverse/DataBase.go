@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"strconv"
 
 	_ "github.com/lib/pq"
 )
@@ -225,4 +226,25 @@ func getUserLessons(db *sql.DB, username string) []lesson {
 		schedule = append(schedule, lesson)
 	}
 	return schedule
+}
+
+func deleteLesson(db *sql.DB, username, id string) {
+	lid, err := strconv.Atoi(id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	query := `
+    DELETE FROM UserToLesson WHERE lid = $1 AND username = $2
+    `
+	_, err = db.Exec(query, lid, username)
+	if err != nil {
+		log.Fatal(err)
+	}
+	query = `
+    Delete FROM lessons WHERE id = $1`
+
+	_, err = db.Exec(query, lid)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

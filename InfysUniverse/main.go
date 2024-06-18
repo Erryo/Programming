@@ -104,6 +104,11 @@ func SubmitAddSubject(w http.ResponseWriter, r *http.Request, username string) {
 }
 
 func AddScheduleHandler(w http.ResponseWriter, r *http.Request, username string) {
+	if r.Method == http.MethodDelete {
+		id := r.URL.Query().Get("Id")
+		deleteLesson(db, username, id)
+		return
+	}
 	r.ParseForm()
 	lesson := lesson{
 		Day:       r.FormValue("Day"),
