@@ -71,7 +71,7 @@ func createUserToSubjectTable(db *sql.DB) {
     PRIMARY KEY(username,name),
     FOREIGN KEY(username) REFERENCES IUuser(username)
     )`
-	_, err := db.Query(query)
+	_, err := db.Exec(query)
 	if err != nil {
 		log.Fatal("Create UtoS ", err)
 	}
@@ -86,7 +86,7 @@ func createUserToLessonTable(db *sql.DB) {
     FOREIGN KEY(username) REFERENCES IUuser(username),
     FOREIGN KEY(lid) REFERENCES lessons(id)
     )`
-	_, err := db.Query(query)
+	_, err := db.Exec(query)
 	if err != nil {
 		log.Fatal("UtoL ", err)
 	}
@@ -124,7 +124,7 @@ func deleteUser(db *sql.DB, username string) {
 	query := `
     DELETE FROM IUuser WHERE username = $1
     `
-	_, err := db.Query(query, username)
+	_, err := db.Exec(query, username)
 	if err != nil {
 		log.Print(err)
 	}
@@ -135,7 +135,7 @@ func insertUserToSubj(db *sql.DB, username, subject string) {
     INSERT INTO UserToSubject (username,name)
     VALUES ($1,$2)
     `
-	_, err := db.Query(query, username, subject)
+	_, err := db.Exec(query, username, subject)
 	if err != nil {
 		log.Println(err)
 	}
@@ -146,7 +146,7 @@ func deleteUserToSubj(db *sql.DB, username, subject string) {
 	query := `
     DELETE FROM UserToSubject WHERE username = $1 AND name = $2
     `
-	_, err := db.Query(query, username, subject)
+	_, err := db.Exec(query, username, subject)
 	if err != nil {
 		log.Print(err)
 	}
@@ -177,11 +177,52 @@ func getUserSubj(db *sql.DB, username string) []string {
 }
 
 func insertLesson(db *sql.DB, username string, lesson lesson) {
+	var id int
 	query := `
     INSERT INTO lessons (day,starttime,endTime,lessonno,name)
-    VALUES ($1,$2,$3,$4,$5)`
-	_, err := db.Query(query, lesson.Day, lesson.StartTime, lesson.EndTime, lesson.Lno, lesson.Name)
+    VALUES ($1,$2,$3,$4,$5) RETURNING id`
+	err := db.QueryRow(query, lesson.Day, lesson.StartTime, lesson.EndTime, lesson.Lno, lesson.Name).Scan(&id)
 	if err != nil {
 		log.Fatal(err)
 	}
+	query = `INSERT INTO UserToLesson (username,lid)
+    VALUES ($1,$2)`
+	db.Exec(query, username, id)
+}
+
+func getUserLessons(db *sql.DB, username string) []lesson {
+	var schedule []lesson
+
+	query := `                                         
+    SELECT lid FROM UserToLesson WHERE username = $1 
+    `
+	rows, err := db.Query(query, username)
+	if err != nil {
+		log.Print(err)
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var lid string
+		var lesson lesson
+		err := rows.Scan(&lid)
+		if err != nil {
+			log.Fatal(err)
+		}
+		query = `
+        SELECT * FROM lessons WHERE id = $1
+        `
+		var starttime sql.NullTime
+		var endtime sql.NullTime
+		err = db.QueryRow(query, lid).Scan(&lesson.Id, &lesson.Day, &starttime, &endtime, &lesson.Lno, &lesson.Name)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(starttime.Time)
+		lesson.StartTime = starttime.Time.Format("15:04")
+		lesson.EndTime = endtime.Time.Format("15:04")
+		schedule = append(schedule, lesson)
+	}
+	return schedule
 }

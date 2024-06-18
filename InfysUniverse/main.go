@@ -27,6 +27,7 @@ type lesson struct {
 	Lno       string
 	StartTime string
 	EndTime   string
+	Id        string
 }
 
 func SubmitLogInHandler(w http.ResponseWriter, r *http.Request) {
@@ -141,10 +142,11 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 		case "/Schedule":
 			fmt.Println("/Schedule casse")
 			subjects := getUserSubj(db, username)
+			schedule := getUserLessons(db, username)
 			user := User{
 				Username: username,
 				Subjects: subjects,
-				Schedule: []lesson{},
+				Schedule: schedule,
 			}
 			HtmlHandler(w, r, "./Templates/schedule.html", "schedule.html", user)
 		case "/LogOut":
