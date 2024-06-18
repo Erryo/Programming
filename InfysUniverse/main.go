@@ -25,6 +25,7 @@ func SubmitLogInHandler(w http.ResponseWriter, r *http.Request) {
 	user := User{
 		Username: r.FormValue("Username"),
 		Password: Encrypt(r.FormValue("Password"), 9),
+		Subjects: []string{},
 	}
 
 	fmt.Println("U: ", user.Username)
@@ -48,6 +49,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	user := User{
 		Username: r.FormValue("Username"),
 		Password: Encrypt(r.FormValue("Password"), 9),
+		Subjects: []string{},
 	}
 	fmt.Println("U: ", user.Username)
 	fmt.Println("P: ", user.Password)
@@ -75,11 +77,12 @@ func HtmlHandler(w http.ResponseWriter, r *http.Request, HtmlFile string, HtmlNa
 	}
 }
 
-func SubmitAddSubject(w http.ResponseWriter, r *http.Request) {
+func SubmitAddSubject(w http.ResponseWriter, r *http.Request, username string) {
 	fmt.Println("SubmitAddSubject called")
+
 	r.ParseForm()
 	subject := r.FormValue("Subject")
-	fmt.Println("Subject: ", subject)
+	insertUserToSubj(db, username, subject)
 }
 
 func GeneralHandler(w http.ResponseWriter, r *http.Request) {
@@ -88,22 +91,11 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 	if found {
 		switch r.URL.Path {
 		case "/mainPage":
-			password := getUser(db, username)
-			user := User{
-				Username: username,
-				Password: password,
-			}
-			HtmlHandler(w, r, "./Templates/mainPage.html", "mainPage.html", user)
+			HtmlHandler(w, r, "./Templates/mainPage.html", "mainPage.html", username)
 
 		case "/LogIn":
 			fmt.Println("LogIn Cookie Yes")
 			http.Redirect(w, r, "/mainPage", http.StatusPermanentRedirect)
-
-		case "/Submit/LogIn":
-			SubmitLogInHandler(w, r)
-
-		case "/Submit/AddSubject":
-			SubmitAddSubject(w, r)
 
 		case "/TicTacToe":
 			HtmlHandler(w, r, "./Templates/ticTacToe.html", "ticTacToe.html", nil)
@@ -118,19 +110,28 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 
 		case "/Schedule":
 			fmt.Println("/Schedule casse")
+			subjects := getUserSubj(db, username)
+			user := User{
+				Username: username,
+				Subjects: subjects,
+			}
+			HtmlHandler(w, r, "./Templates/schedule.html", "schedule.html", user)
 		case "/LogOut":
 			SetLoggedCookie(w, r, "nil")
 			HtmlHandler(w, r, "./Templates/logIn.html", "logIn.html", nil)
+
+		case "/Submit/LogIn":
+			SubmitLogInHandler(w, r)
+
+		case "/Submit/AddSubject":
+			SubmitAddSubject(w, r, username)
+
 		default:
 			HtmlHandler(w, r, "./Templates/notFound.html", "notFound.html", nil)
 
 		}
 	} else {
 		switch r.URL.Path {
-		case "/":
-			http.Redirect(w, r, "/LogIn", http.StatusFound)
-		case "/mainPage":
-			http.Redirect(w, r, "/LogIn", http.StatusFound)
 		case "/LogIn":
 			retry := r.URL.Query().Get("r")
 			var message string
@@ -138,25 +139,22 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 			case "1":
 				message = "Incorrect Password"
 			case "2":
-				message = "User Username"
+				message = "Incorrect Username"
 			case "3":
 				message = "User already Exists"
 			}
 			HtmlHandler(w, r, "./Templates/logIn.html", "logIn.html", message)
+		case "/Submit/LogIn":
+			SubmitLogInHandler(w, r)
+		case "/Register":
+			RegisterHandler(w, r)
+
 		case "/LogOut":
 			SetLoggedCookie(w, r, "nil")
 			HtmlHandler(w, r, "./Templates/logIn.html", "logIn.html", nil)
-		case "/Submit/LogIn":
-			SubmitLogInHandler(w, r)
-		case "/TicTacToe":
-			http.Redirect(w, r, "/LogIn", http.StatusNotModified)
-		case "/Register":
-			RegisterHandler(w, r)
-		case "/Schedule":
-			http.Redirect(w, r, "/LogIn", http.StatusNotModified)
+
 		default:
 			http.Redirect(w, r, "/LogIn", http.StatusMovedPermanently)
-			HtmlHandler(w, r, "./Templates/notFound.html", "notFound.html", nil)
 		}
 	}
 }
@@ -171,6 +169,10 @@ func main() {
 
 	db = connectDB()
 	createUserTable(db)
+	createUserToSubjectTable(db)
+	createLessonTable(db)
+	createUserToLessonTable(db)
+
 	defer db.Close()
 
 	http.Handle("/Static/", http.StripPrefix("/Static/", http.FileServer(http.Dir("Static"))))
