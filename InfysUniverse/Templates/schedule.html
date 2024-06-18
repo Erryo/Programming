@@ -34,7 +34,7 @@
           {{end}}
           <a id="last"></a>
         </ul>
-        <form class="addSubjects" id="myForm1" method="POST">
+        <form class="addSubjects" id="myForm" method="POST">
           <input
             type="text"
             id="SubjField"
@@ -80,7 +80,7 @@
               <form id="scheduleForm">
                 <td>
                   <label for="Day"></label>
-                  <select name="Day">
+                  <select name="Day" required>
                     <option value="Monday">Monday</option>
                     <option value="Tuesday">Tuesday</option>
                     <option value="Wednesday">Wednesday</option>
@@ -92,7 +92,7 @@
                 </td>
                 <td>
                   <label for="Name"></label>
-                  <select name="Name">
+                  <select name="Name" required>
                     {{range .Subjects}}
                     <option value="{{print .}}">{{print .}}</option>
                     {{end}}
@@ -100,7 +100,7 @@
                 </td>
                 <td>
                   <label for="Lno"></label>
-                  <select name="Lno">
+                  <select name="Lno" required>
                     <option value="1">1.</option>
                     <option value="2">2.</option>
                     <option value="3">3.</option>
@@ -112,10 +112,10 @@
                   </select>
                 </td>
                 <td>
-                  <input type="time" name="StartTime" value="" />
+                  <input type="time" required name="StartTime" value="" />
                 </td>
                 <td>
-                  <input type="time" name="EndTime" value="" />
+                  <input type="time"required name="EndTime" value="" />
                 </td>
                 <td>
                   <button type="button" onclick="SendSchedule()">+</button>

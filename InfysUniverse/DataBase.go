@@ -70,7 +70,7 @@ func createUserToSubjectTable(db *sql.DB) {
     username varchar(25) NOT NULL,
     name varchar(25) NOT NULL,
     PRIMARY KEY(username,name),
-    FOREIGN KEY(username) REFERENCES IUuser(username)
+    FOREIGN KEY(username) REFERENCES IUuser(username) ON DELETE CASCADE  
     )`
 	_, err := db.Exec(query)
 	if err != nil {
@@ -84,9 +84,8 @@ func createUserToLessonTable(db *sql.DB) {
     username varchar(25) NOT NULL,
     lid SMALLINT NOT NULL,
     PRIMARY KEY(username,lid),
-    FOREIGN KEY(username) REFERENCES IUuser(username),
-    FOREIGN KEY(lid) REFERENCES lessons(id)
-    )`
+    FOREIGN KEY(username) REFERENCES IUuser(username) ON DELETE CASCADE ,
+    FOREIGN KEY(lid) REFERENCES lessons(id) ON DELETE CASCADE     )`
 	_, err := db.Exec(query)
 	if err != nil {
 		log.Fatal("UtoL ", err)
@@ -123,7 +122,7 @@ func getUser(db *sql.DB, username string) string {
 
 func deleteUser(db *sql.DB, username string) {
 	query := `
-    DELETE FROM IUuser WHERE username = $1
+    DELETE FROM IUuser WHERE username = $1 
     `
 	_, err := db.Exec(query, username)
 	if err != nil {
@@ -132,6 +131,7 @@ func deleteUser(db *sql.DB, username string) {
 }
 
 func insertUserToSubj(db *sql.DB, username, subject string) {
+	fmt.Println("insertUserToSubj")
 	query := `
     INSERT INTO UserToSubject (username,name)
     VALUES ($1,$2)
@@ -146,6 +146,7 @@ func deleteUserToSubj(db *sql.DB, username, subject string) {
 	log.Println("delete:", subject)
 	query := `
     DELETE FROM UserToSubject WHERE username = $1 AND name = $2
+    
     `
 	_, err := db.Exec(query, username, subject)
 	if err != nil {
@@ -235,13 +236,16 @@ func deleteLesson(db *sql.DB, username, id string) {
 	}
 	query := `
     DELETE FROM UserToLesson WHERE lid = $1 AND username = $2
+    
     `
 	_, err = db.Exec(query, lid, username)
 	if err != nil {
 		log.Fatal(err)
 	}
 	query = `
-    Delete FROM lessons WHERE id = $1`
+    Delete FROM lessons WHERE id = $1
+
+    `
 
 	_, err = db.Exec(query, lid)
 	if err != nil {

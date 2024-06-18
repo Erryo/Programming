@@ -97,6 +97,7 @@ func SubmitAddSubject(w http.ResponseWriter, r *http.Request, username string) {
 	r.ParseForm()
 	subject := r.FormValue("Subject")
 
+	fmt.Println("Subject", subject)
 	if len(subject) == 0 || subject == "" || subject == " " {
 		return
 	}
