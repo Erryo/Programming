@@ -1,0 +1,22 @@
+{
+  "name": "infysuniverse",
+  "version": "1.0.0",
+  "description": "a website to learn WebDeb",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/Erryo/Programming"
+  },
+  "author": "Infy",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "tailwindcss": "^3.4.4"
+  },
+  "scripts": {
+    "build": "tailwindcss build -o Static/Css/tailwind.css",
+    "watch": "tailwindcss build -o Static/Css/tailwind.css --watch"
+  }
+}

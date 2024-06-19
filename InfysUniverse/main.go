@@ -1,5 +1,6 @@
 package main
 
+//go:generate npm run build
 import (
 	"database/sql"
 	"encoding/hex"
@@ -72,7 +73,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/LogIn?r=3", http.StatusMovedPermanently)
 		return
 	}
-	http.Redirect(w, r, "/LogIn", http.StatusMovedPermanently)
+	http.Redirect(w, r, "/LogIn?=4", http.StatusMovedPermanently)
 }
 
 func HtmlHandler(w http.ResponseWriter, r *http.Request, HtmlFile string, HtmlName string, Data interface{}) {
@@ -183,6 +184,8 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 				message = "Incorrect Username"
 			case "3":
 				message = "User already Exists"
+			case "4":
+				message = "User created succesfully"
 			}
 			HtmlHandler(w, r, "./Templates/logIn.html", "logIn.html", message)
 		case "/Submit/LogIn":

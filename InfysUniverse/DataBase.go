@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"strconv"
@@ -99,7 +100,9 @@ func insertUser(db *sql.DB, user User) bool {
 	err := db.QueryRow(query, user.Username, user.Password).Scan()
 	if err != nil {
 		log.Print("Ins user: ", err)
-		return false
+		if !errors.Is(err, sql.ErrNoRows) {
+			return false
+		}
 	}
 	return true
 }
