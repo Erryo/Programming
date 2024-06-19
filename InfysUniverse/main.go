@@ -102,7 +102,14 @@ func SubmitAddSubject(w http.ResponseWriter, r *http.Request, username string) {
 	if len(subject) == 0 || subject == "" || subject == " " {
 		return
 	}
-	insertUserToSubj(db, username, subject)
+	err := insertUserToSubj(db, username, subject)
+	if err {
+		return
+	}
+	htmlStr := fmt.Sprintf("<li class='text-xl mt-4 ml-6'>%s<button class='inline py-0 px-2 bg-white rounded-lg hover:bg-green-300/40' hx-delete='/Submit/AddSubject' hx-vals='{\"S\": \"%s\"}' hx-swap='delete' hx-target='#%s'  type='button'>-</button></li>", subject, subject, subject)
+	fmt.Println(htmlStr)
+	tmpl, _ := template.New("t").Parse(htmlStr)
+	tmpl.Execute(w, nil)
 }
 
 func AddScheduleHandler(w http.ResponseWriter, r *http.Request, username string) {

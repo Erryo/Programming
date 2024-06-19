@@ -133,7 +133,7 @@ func deleteUser(db *sql.DB, username string) {
 	}
 }
 
-func insertUserToSubj(db *sql.DB, username, subject string) {
+func insertUserToSubj(db *sql.DB, username, subject string) bool {
 	fmt.Println("insertUserToSubj")
 	query := `
     INSERT INTO UserToSubject (username,name)
@@ -142,7 +142,9 @@ func insertUserToSubj(db *sql.DB, username, subject string) {
 	_, err := db.Exec(query, username, subject)
 	if err != nil {
 		log.Println(err)
+		return true
 	}
+	return false
 }
 
 func deleteUserToSubj(db *sql.DB, username, subject string) {

@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./Templates//*.html"], // This is where your HTML templates / JSX files are located
+  plugins: [require("@tailwindcss/forms")],
   theme: {
     extend: {
       fontFamily: {
@@ -10,7 +11,6 @@ module.exports = {
       },
       backgroundImage: {
         "man-ship": "url('/Static/Images/a_space_ship_man_rocky.jpg')",
-        "footer-texture": "url('./Static/Images/a_map_of_a_city.jpg')",
       },
     },
   },

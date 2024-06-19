@@ -4,7 +4,8 @@
   "description": "a website to learn WebDeb",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tailwindcss build -i Static/Css/schedule.css-o Static/Css/tailwind.css",
+    "watch": "tailwindcss build -i Static/Css/schedule.css -o Static/Css/tailwind.css --watch"
   },
   "repository": {
     "type": "git",
@@ -15,8 +16,7 @@
   "dependencies": {
     "tailwindcss": "^3.4.4"
   },
-  "scripts": {
-    "build": "tailwindcss build -o Static/Css/tailwind.css",
-    "watch": "tailwindcss build -o Static/Css/tailwind.css --watch"
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.7"
   }
 }
