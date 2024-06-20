@@ -6,6 +6,9 @@
     @apply bg-gray-300 text-black  scale-0 absolute  w-auto p-2 m-2 rounded-xl duration-500;
   }
 
+  .grid-btn-red {
+    @apply rounded-lg xl:rounded-md text-3xl bg-red-900 border-2 border-slate-900 m-2 font-semibold  aspect-square xl:aspect-auto xl:h-40 max-h-56 xl:max-h-52;
+  }
   .grid-btn {
     @apply rounded-lg xl:rounded-md text-3xl bg-slate-400 xl:bg-[#afcfd0]  border-2 border-slate-900 m-2 font-semibold hover:bg-gray-600 xl:hover:bg-gray-400 aspect-square xl:aspect-auto xl:h-40 max-h-56 xl:max-h-52;
   }

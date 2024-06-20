@@ -13,14 +13,13 @@
       rel="stylesheet"
       href="https://cdn.xeiaso.net/static/pkg/iosevka/family.css"
     />
-    <script src="https://unpkg.com/htmx.org@2.0.0"></script>
     <link href="/Static/Css/tailwind.css" rel="stylesheet" />
   </head>
   <body
-    class="bg-gray-200 xl:bg-city-map xl:bg-cover xl:bg-no-repeat flex flex-col overflow-hidden"
+    class="bg-gray-200 xl:bg-city-map xl:bg-cover xl:bg-no-repeat flex flex-col overflow-y-scroll"
   >
     <nav
-      class="w-full shadow-md shadow-slate-900 bg-[#5f9ea0] px-2 xl:px-4 xl:text-4xl flex flex-row items-center justify-between rounded-b-xl xl:rounded-b-3xl h-14 md:h-20"
+      class="w-full sticky top-0 z-10 shadow-md shadow-slate-900 bg-[#5f9ea0] px-2 xl:px-4 xl:text-4xl flex flex-row items-center justify-between rounded-b-xl xl:rounded-b-3xl h-14 md:h-[4.5rem]"
     >
       <div class="hover:text-white">
         <a href="/mainPage"><i class="fa fa-home"></i></a>
@@ -49,22 +48,96 @@
       <div
         class="mx-auto bg-amber-700/80 xl:bg-violet-700/60 border-2 border-slate-700 rounded py-1 px-1 hover:animate-[size_1s_ease-in-out_infinite]"
       >
-        <button type="button">Res</button>
+        <button type="button" onclick="reset()">Res</button>
       </div>
       <div class="mx-auto">O: <font id="o_sc">0</font></div>
     </div>
     <div
       class="grid grid-rows-3 grid-cols-3 xl:gap-2 shadow-xl shadow-slate-900 mx-6 xl:mx-[30rem] xl:backdrop-filter backdrop-blur border-2 border-slate-700 p-3 rounded-xl"
     >
-      <button class="grid-btn" type="button">1</button>
-      <button class="grid-btn" type="button">2</button>
-      <button class="grid-btn" type="button">3</button>
-      <button class="grid-btn" type="button">4</button>
-      <button class="grid-btn" type="button">5</button>
-      <button class="grid-btn" type="button">6</button>
-      <button class="grid-btn" type="button">7</button>
-      <button class="grid-btn" type="button">8</button>
-      <button class="grid-btn" type="button">9</button>
+      <button
+        class="grid-btn"
+        id="1"
+        value="_"
+        onclick="setButton(1)"
+        type="button"
+      >
+        _
+      </button>
+      <button
+        class="grid-btn"
+        id="2"
+        value="_"
+        onclick="setButton(2)"
+        type="button"
+      >
+        _
+      </button>
+      <button
+        class="grid-btn"
+        id="3"
+        value="_"
+        onclick="setButton(3)"
+        type="button"
+      >
+        _
+      </button>
+      <button
+        class="grid-btn"
+        id="4"
+        value="_"
+        onclick="setButton(4)"
+        type="button"
+      >
+        _
+      </button>
+      <button
+        class="grid-btn"
+        id="5"
+        value="_"
+        onclick="setButton(5)"
+        type="button"
+      >
+        _
+      </button>
+      <button
+        class="grid-btn"
+        id="6"
+        value="_"
+        onclick="setButton(6)"
+        type="button"
+      >
+        _
+      </button>
+      <button
+        class="grid-btn"
+        id="7"
+        value="_"
+        onclick="setButton(7)"
+        type="button"
+      >
+        _
+      </button>
+      <button
+        class="grid-btn"
+        id="8"
+        value="_"
+        onclick="setButton(8)"
+        type="button"
+      >
+        _
+      </button>
+      <button
+        class="grid-btn"
+        id="9"
+        value="_"
+        onclick="setButton(9)"
+        type="button"
+      >
+        _
+      </button>
     </div>
+    <div class="grid-btn-red hidden"></div>
+    <script src="/Static/JavaScript/TicTacToe.js"></script>
   </body>
 </html>
