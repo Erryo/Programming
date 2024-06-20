@@ -2,10 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 @layer components {
-  .btn-blue {
-    @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded;
-  }
   .topbar-menu {
     @apply bg-gray-300 text-black  scale-0 absolute top-8 right-11 w-auto p-2 m-2 rounded-xl duration-500;
+  }
+  thead th {
+    @apply px-6 py-3;
+    width: 200px;
+  }
+  tr {
+    @apply text-center odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700;
+  }
+  tbody td {
+    width: 200px;
+    @apply text-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white;
+  }
+
+  input[type="text"],
+  input[type="time"],
+  input[type="button"],
+  select {
+    @apply bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
   }
 }

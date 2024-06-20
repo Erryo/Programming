@@ -4,8 +4,8 @@
   "description": "a website to learn WebDeb",
   "main": "index.js",
   "scripts": {
-    "build": "tailwindcss build -i Static/Css/schedule.css-o Static/Css/tailwind.css",
-    "watch": "tailwindcss build -i Static/Css/schedule.css -o Static/Css/tailwind.css --watch"
+    "build": "tailwindcss build -i Static/Css/schedule.css -o Static/Css/tailwind.css --minify",
+    "watch": "tailwindcss build -i Static/Css/schedule.css -o Static/Css/tailwind.css --watch  --minify"
   },
   "repository": {
     "type": "git",

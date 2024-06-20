@@ -183,7 +183,7 @@ func getUserSubj(db *sql.DB, username string) []string {
 	return subjects
 }
 
-func insertLesson(db *sql.DB, username string, lesson lesson) {
+func insertLesson(db *sql.DB, username string, lesson lesson) bool {
 	var id int
 	query := `
     INSERT INTO lessons (day,starttime,endTime,lessonno,name)
@@ -194,7 +194,12 @@ func insertLesson(db *sql.DB, username string, lesson lesson) {
 	}
 	query = `INSERT INTO UserToLesson (username,lid)
     VALUES ($1,$2)`
-	db.Exec(query, username, id)
+	_, err = db.Exec(query, username, id)
+	if err != nil {
+		log.Print(err)
+		return true
+	}
+	return false
 }
 
 func getUserLessons(db *sql.DB, username string) []lesson {

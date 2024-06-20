@@ -106,7 +106,21 @@ func SubmitAddSubject(w http.ResponseWriter, r *http.Request, username string) {
 	if err {
 		return
 	}
-	htmlStr := fmt.Sprintf("<li class='text-xl mt-4 ml-6'>%s<button class='inline py-0 px-2 bg-white rounded-lg hover:bg-green-300/40' hx-delete='/Submit/AddSubject' hx-vals='{\"S\": \"%s\"}' hx-swap='delete' hx-target='#%s'  type='button'>-</button></li>", subject, subject, subject)
+
+	htmlStr := fmt.Sprintf(`
+          <li class="text-xl mt-4 ml-6" id='%s'>
+        %s
+	<button 
+		class="inline text-lg py-0 px-2 bg-white rounded-lg hover:animate-[size_1s_ease-in-out_infinite]"
+		hx-delete="/Submit/AddSubject"
+		hx-vals='{"S": "%s"}'
+		hx-swap="delete"
+		hx-target="#%s"
+		type="button">
+		-
+	</button>
+          </li>
+        `, subject, subject, subject, subject)
 	fmt.Println(htmlStr)
 	tmpl, _ := template.New("t").Parse(htmlStr)
 	tmpl.Execute(w, nil)
@@ -127,7 +141,15 @@ func AddScheduleHandler(w http.ResponseWriter, r *http.Request, username string)
 		EndTime:   r.FormValue("EndTime"),
 	}
 	fmt.Println(lesson)
-	insertLesson(db, username, lesson)
+	err := insertLesson(db, username, lesson)
+	if err {
+		return
+	}
+	htmlStr := fmt.Sprintf("<tr> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td>  <td>%s</td>  </tr>", lesson.Day, lesson.Name, lesson.Lno, lesson.StartTime, lesson.EndTime)
+	htmlStr = fmt.Sprintf("<h1>AAAAA</h1>")
+	fmt.Println(htmlStr)
+	tmpl, _ := template.New("t").Parse(htmlStr)
+	tmpl.Execute(w, nil)
 }
 
 func GeneralHandler(w http.ResponseWriter, r *http.Request) {
