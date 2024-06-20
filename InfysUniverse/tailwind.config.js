@@ -13,7 +13,7 @@ module.exports = {
       fontFamily: {
         sans: ["Iosevka Aile Iaso", "sans-serif"],
         mono: ["Iosevka Curly Iaso", "monospace"],
-        serif: ["Iosevka Etoile Iaso", "serif"],
+        serif: ["Iosevka Etoile Iaso", "serif", "Forum"],
       },
       boxShadow: {
         col: "0px 35px 60px 0px rgba(47, 72, 88 ,0.4)",

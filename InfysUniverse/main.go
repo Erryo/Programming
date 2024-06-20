@@ -167,7 +167,7 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 		case "/TicTacToe":
 			HtmlHandler(w, r, "./Templates/ticTacToe.html", "ticTacToe.html", username)
 
-		case "/Register":
+		case "/Submit/Register":
 			RegisterHandler(w, r)
 
 		case "/DeleteMe":
@@ -217,10 +217,24 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 				message = "User created succesfully"
 			}
 			HtmlHandler(w, r, "./Templates/logIn.html", "logIn.html", message)
+		case "/Register":
+			retry := r.URL.Query().Get("r")
+			var message string
+			switch retry {
+			case "1":
+				message = "Incorrect Password"
+			case "2":
+				message = "Incorrect Username"
+			case "3":
+				message = "User already Exists"
+			case "4":
+				message = "User created succesfully"
+			}
+			HtmlHandler(w, r, "./Templates/logIn.html", "logIn.html", message)
 		case "/Submit/LogIn":
 			SubmitLogInHandler(w, r)
 
-		case "/Register":
+		case "/Submit/Register":
 			RegisterHandler(w, r)
 
 		case "/LogOut":
