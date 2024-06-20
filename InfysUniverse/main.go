@@ -165,7 +165,7 @@ func GeneralHandler(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/mainPage", http.StatusPermanentRedirect)
 
 		case "/TicTacToe":
-			HtmlHandler(w, r, "./Templates/ticTacToe.html", "ticTacToe.html", nil)
+			HtmlHandler(w, r, "./Templates/ticTacToe.html", "ticTacToe.html", username)
 
 		case "/Register":
 			RegisterHandler(w, r)

@@ -15,6 +15,7 @@ module.exports = {
       },
       backgroundImage: {
         "man-ship": "url('/Static/Images/a_space_ship_man_rocky.jpg')",
+        "city-map": "url('/Static/Images/a_map_of_a_city.jpg')",
       },
       keyframes: {
         size: {
