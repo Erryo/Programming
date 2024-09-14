@@ -26,7 +26,14 @@ Here are the current projects included in this repository:
 - WaveFunctionCollapse
 - WebLearn
 - WordlePy
+- BPY script to animate a [LightPipe](https://cccgoe.de/projekte/lightpipe.html) in 3D
 # Gallery 
+
+**3D LightPipe effect**
+
+https://github.com/user-attachments/assets/138254c9-4143-4f7e-bafc-ac8b93bfac27
+
+
 
 **Conway's Game of Life in go+ncurses**
 
