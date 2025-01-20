@@ -45,11 +45,11 @@ https://github.com/Erryo/Programming/assets/159823096/442f19fb-0b07-480d-a728-da
 
 **Infy's Universe - a website i made for easy access to school Schedule and othe stuff (go+js)**
 
-https://github.com/Erryo/Programming/assets/159823096/2a2783e2-26eb-4b85-aa2a-bc2db6256dd3
+https://github.com/Erryo/Programming/assets/159823096/050a17d3-1671-4e38-945d-51283ea9b39f
 
 **IDoToo-a ToDo CLI app**
 
-https://github.com/Erryo/Programming/assets/159823096/050a17d3-1671-4e38-945d-51283ea9b39f
+https://github.com/Erryo/Programming/assets/159823096/2a2783e2-26eb-4b85-aa2a-bc2db6256dd3
 
 
 
@@ -60,3 +60,16 @@ The projects are written in Python and Go, so ensure you have the appropriate ru
 ## Contributing
 
 Contributions are not accepted at this time. However, if you encounter any issues while using the code, please report them through GitHub issues.
+
+
+## Hints For me 
+
+#### clone git repo with token :
+`
+git clone https://username:<MYTOKEN>@github.com/username
+`
+#### change remote url of repo
+`
+git remote set-url origin  https://username:<MYTOKEN>@github.com/username/Repo
+`
+
