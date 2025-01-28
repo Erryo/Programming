@@ -19,8 +19,8 @@ var (
 )
 
 type Tile struct {
-	entropy uint8
-	symbol  symbol
+	Entropy uint8
+	Symbol  symbol
 }
 
 type symbol struct {
@@ -45,23 +45,24 @@ func Side() {
 
 	Up, Right = connect(Up, Right, sUp, sRight)
 	Up, Left = connect(Up, Left, sUp, sLeft)
-	Up, Up = connect(Up, Up, sUp, sUp)
+	//[[I1]]
+	Up, _ = connect(Up, Up, sUp, sUp)
 	Up, Down = connect(Up, Down, sUp, sDown)
 	Up, Empty = connect(Up, Empty, sUp, sEmpty)
 
 	Right, Left = connect(Right, Left, sRight, sLeft)
 	Right, Down = connect(Right, Down, sRight, sDown)
-	Right, Right = connect(Right, Right, sRight, sRight)
+	Right, _ = connect(Right, Right, sRight, sRight)
 	Right, Empty = connect(Right, Empty, sRight, sEmpty)
 
-	Down, Down = connect(Down, Down, sDown, sDown)
+	Down, _ = connect(Down, Down, sDown, sDown)
 	Down, Left = connect(Down, Left, sDown, sLeft)
 	Down, Empty = connect(Down, Empty, sDown, sEmpty)
 
-	Left, Left = connect(Left, Left, sLeft, sLeft)
+	Left, _ = connect(Left, Left, sLeft, sLeft)
 	Left, Empty = connect(Left, Empty, sLeft, sEmpty)
 
-	Empty, Empty = connect(Empty, Empty, sEmpty, sEmpty)
+	Empty, _ = connect(Empty, Empty, sEmpty, sEmpty)
 }
 
 // 0 = up
@@ -71,6 +72,7 @@ func Side() {
 // Creates the connections for the given 2 symbols
 // DO NOT TOUCH!!!
 // 20.01.25 I assume it is done(it has been over 2 months since writing the code)
+// anything written to the victim gets overwritten by the Target when the 2 are the same symbol [[I1]]
 func connect(victim, target symbol, victimData, targetData [4]uint8) (symbol, symbol) {
 	if victim.icon != target.icon {
 		if targetData[2] == victimData[0] {
@@ -115,7 +117,7 @@ func DrawAllConnections() {
 		for range currentSymbol.up {
 			fmt.Print(currentSymbol.icon, " ")
 		}
-		fmt.Println("\n----")
+		fmt.Println("\n----D")
 
 		for range currentSymbol.down {
 			fmt.Print(currentSymbol.icon, " ")
@@ -124,14 +126,14 @@ func DrawAllConnections() {
 		for _, neigbourSymbol := range currentSymbol.down {
 			fmt.Print(neigbourSymbol, " ")
 		}
-		fmt.Println("\n----")
+		fmt.Println("\n----L")
 
 		for _, neigbourSymbol := range currentSymbol.left {
 			fmt.Print(neigbourSymbol, currentSymbol.icon)
 			fmt.Print("  ")
 		}
-		fmt.Println("\n----")
-		for _, neigbourSymbol := range currentSymbol.left {
+		fmt.Println("\n----R")
+		for _, neigbourSymbol := range currentSymbol.right {
 			fmt.Print(currentSymbol.icon, neigbourSymbol)
 			fmt.Print("  ")
 		}
