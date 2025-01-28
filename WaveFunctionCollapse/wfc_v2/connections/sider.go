@@ -24,18 +24,18 @@ type Tile struct {
 }
 
 type symbol struct {
-	icon                  string
+	Icon                  string
 	up, down, left, right []string
 }
 
 // DO NOT TOUCH!!!
 // 20.01.25 I assume it is done(it has been over 2 months since writing the code) :
 func Side() {
-	Up = symbol{icon: UP}
-	Right = symbol{icon: RIGHT}
-	Down = symbol{icon: DOWN}
-	Left = symbol{icon: LEFT}
-	Empty = symbol{icon: EMPTY}
+	Up = symbol{Icon: UP}
+	Right = symbol{Icon: RIGHT}
+	Down = symbol{Icon: DOWN}
+	Left = symbol{Icon: LEFT}
+	Empty = symbol{Icon: EMPTY}
 
 	sUp := [4]uint8{1, 1, 0, 1}
 	sRight := [4]uint8{1, 1, 1, 0}
@@ -74,32 +74,32 @@ func Side() {
 // 20.01.25 I assume it is done(it has been over 2 months since writing the code)
 // anything written to the victim gets overwritten by the Target when the 2 are the same symbol [[I1]]
 func connect(victim, target symbol, victimData, targetData [4]uint8) (symbol, symbol) {
-	if victim.icon != target.icon {
+	if victim.Icon != target.Icon {
 		if targetData[2] == victimData[0] {
-			target.down = append(target.down, victim.icon)
+			target.down = append(target.down, victim.Icon)
 		}
 		if targetData[3] == victimData[1] {
-			target.left = append(target.left, victim.icon)
+			target.left = append(target.left, victim.Icon)
 		}
 		if targetData[0] == victimData[2] {
-			target.up = append(target.up, victim.icon)
+			target.up = append(target.up, victim.Icon)
 		}
 		if targetData[1] == victimData[3] {
-			target.right = append(target.right, victim.icon)
+			target.right = append(target.right, victim.Icon)
 		}
 
 	}
 	if targetData[2] == victimData[0] {
-		victim.up = append(victim.up, target.icon)
+		victim.up = append(victim.up, target.Icon)
 	}
 	if targetData[3] == victimData[1] {
-		victim.right = append(victim.right, target.icon)
+		victim.right = append(victim.right, target.Icon)
 	}
 	if targetData[0] == victimData[2] {
-		victim.down = append(victim.down, target.icon)
+		victim.down = append(victim.down, target.Icon)
 	}
 	if targetData[1] == victimData[3] {
-		victim.left = append(victim.left, target.icon)
+		victim.left = append(victim.left, target.Icon)
 	}
 	return victim, target
 }
@@ -115,12 +115,12 @@ func DrawAllConnections() {
 		}
 		fmt.Println()
 		for range currentSymbol.up {
-			fmt.Print(currentSymbol.icon, " ")
+			fmt.Print(currentSymbol.Icon, " ")
 		}
 		fmt.Println("\n----D")
 
 		for range currentSymbol.down {
-			fmt.Print(currentSymbol.icon, " ")
+			fmt.Print(currentSymbol.Icon, " ")
 		}
 		fmt.Println()
 		for _, neigbourSymbol := range currentSymbol.down {
@@ -129,12 +129,12 @@ func DrawAllConnections() {
 		fmt.Println("\n----L")
 
 		for _, neigbourSymbol := range currentSymbol.left {
-			fmt.Print(neigbourSymbol, currentSymbol.icon)
+			fmt.Print(neigbourSymbol, currentSymbol.Icon)
 			fmt.Print("  ")
 		}
 		fmt.Println("\n----R")
 		for _, neigbourSymbol := range currentSymbol.right {
-			fmt.Print(currentSymbol.icon, neigbourSymbol)
+			fmt.Print(currentSymbol.Icon, neigbourSymbol)
 			fmt.Print("  ")
 		}
 
