@@ -11,19 +11,20 @@ const (
 )
 
 var (
-	Up    symbol
-	Right symbol
-	Down  symbol
-	Left  symbol
-	Empty symbol
+	Up    Symbol
+	Right Symbol
+	Down  Symbol
+	Left  Symbol
+	Empty Symbol
 )
 
 type Tile struct {
-	Entropy uint8
-	Symbol  symbol
+	Entropy       uint8
+	Symbol        Symbol
+	Possibilities []Symbol
 }
 
-type symbol struct {
+type Symbol struct {
 	Icon                  string
 	up, down, left, right []string
 }
@@ -31,11 +32,11 @@ type symbol struct {
 // DO NOT TOUCH!!!
 // 20.01.25 I assume it is done(it has been over 2 months since writing the code) :
 func Side() {
-	Up = symbol{Icon: UP}
-	Right = symbol{Icon: RIGHT}
-	Down = symbol{Icon: DOWN}
-	Left = symbol{Icon: LEFT}
-	Empty = symbol{Icon: EMPTY}
+	Up = Symbol{Icon: UP}
+	Right = Symbol{Icon: RIGHT}
+	Down = Symbol{Icon: DOWN}
+	Left = Symbol{Icon: LEFT}
+	Empty = Symbol{Icon: EMPTY}
 
 	sUp := [4]uint8{1, 1, 0, 1}
 	sRight := [4]uint8{1, 1, 1, 0}
@@ -73,7 +74,7 @@ func Side() {
 // DO NOT TOUCH!!!
 // 20.01.25 I assume it is done(it has been over 2 months since writing the code)
 // anything written to the victim gets overwritten by the Target when the 2 are the same symbol [[I1]]
-func connect(victim, target symbol, victimData, targetData [4]uint8) (symbol, symbol) {
+func connect(victim, target Symbol, victimData, targetData [4]uint8) (Symbol, Symbol) {
 	if victim.Icon != target.Icon {
 		if targetData[2] == victimData[0] {
 			target.down = append(target.down, victim.Icon)
@@ -106,7 +107,7 @@ func connect(victim, target symbol, victimData, targetData [4]uint8) (symbol, sy
 
 // For testing purposes only
 func DrawAllConnections() {
-	allSymbols := []symbol{Up, Down, Left, Right, Empty}
+	allSymbols := []Symbol{Up, Down, Left, Right, Empty}
 
 	for _, currentSymbol := range allSymbols {
 
