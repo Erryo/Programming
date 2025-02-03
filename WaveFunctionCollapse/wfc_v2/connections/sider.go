@@ -3,30 +3,32 @@ package connections
 import "fmt"
 
 const (
-	UP    string = "┴"
-	RIGHT string = "├"
-	DOWN  string = "┬"
-	LEFT  string = "┤"
-	EMPTY string = "▒"
+	UP          string = "┴"
+	RIGHT       string = "├"
+	DOWN        string = "┬"
+	LEFT        string = "┤"
+	EMPTY       string = "▒"
+	TOTAL_ICONS        = 5
 )
 
 var (
-	Up    Symbol
-	Right Symbol
-	Down  Symbol
-	Left  Symbol
-	Empty Symbol
+	Up            Symbol
+	Right         Symbol
+	Down          Symbol
+	Left          Symbol
+	Empty         Symbol
+	IconSymbolMap map[string]Symbol
 )
 
 type Tile struct {
 	Entropy       uint8
 	Symbol        Symbol
-	Possibilities []Symbol
+	Possibilities []string
 }
 
 type Symbol struct {
 	Icon                  string
-	up, down, left, right []string
+	Up, Down, Left, Right []string
 }
 
 // DO NOT TOUCH!!!
@@ -64,6 +66,17 @@ func Side() {
 	Left, Empty = connect(Left, Empty, sLeft, sEmpty)
 
 	Empty, _ = connect(Empty, Empty, sEmpty, sEmpty)
+
+	// Cannot use this Map because it needs to be Global
+	tempMap := make(map[string]Symbol, TOTAL_ICONS)
+
+	tempMap[UP] = Up
+	tempMap[LEFT] = Left
+	tempMap[DOWN] = Down
+	tempMap[RIGHT] = Right
+	tempMap[EMPTY] = Empty
+
+	IconSymbolMap = tempMap
 }
 
 // 0 = up
@@ -77,30 +90,30 @@ func Side() {
 func connect(victim, target Symbol, victimData, targetData [4]uint8) (Symbol, Symbol) {
 	if victim.Icon != target.Icon {
 		if targetData[2] == victimData[0] {
-			target.down = append(target.down, victim.Icon)
+			target.Down = append(target.Down, victim.Icon)
 		}
 		if targetData[3] == victimData[1] {
-			target.left = append(target.left, victim.Icon)
+			target.Left = append(target.Left, victim.Icon)
 		}
 		if targetData[0] == victimData[2] {
-			target.up = append(target.up, victim.Icon)
+			target.Up = append(target.Up, victim.Icon)
 		}
 		if targetData[1] == victimData[3] {
-			target.right = append(target.right, victim.Icon)
+			target.Right = append(target.Right, victim.Icon)
 		}
 
 	}
 	if targetData[2] == victimData[0] {
-		victim.up = append(victim.up, target.Icon)
+		victim.Up = append(victim.Up, target.Icon)
 	}
 	if targetData[3] == victimData[1] {
-		victim.right = append(victim.right, target.Icon)
+		victim.Right = append(victim.Right, target.Icon)
 	}
 	if targetData[0] == victimData[2] {
-		victim.down = append(victim.down, target.Icon)
+		victim.Down = append(victim.Down, target.Icon)
 	}
 	if targetData[1] == victimData[3] {
-		victim.left = append(victim.left, target.Icon)
+		victim.Left = append(victim.Left, target.Icon)
 	}
 	return victim, target
 }
@@ -111,30 +124,30 @@ func DrawAllConnections() {
 
 	for _, currentSymbol := range allSymbols {
 
-		for _, neigbourSymbol := range currentSymbol.up {
+		for _, neigbourSymbol := range currentSymbol.Up {
 			fmt.Print(neigbourSymbol, " ")
 		}
 		fmt.Println()
-		for range currentSymbol.up {
+		for range currentSymbol.Up {
 			fmt.Print(currentSymbol.Icon, " ")
 		}
 		fmt.Println("\n----D")
 
-		for range currentSymbol.down {
+		for range currentSymbol.Down {
 			fmt.Print(currentSymbol.Icon, " ")
 		}
 		fmt.Println()
-		for _, neigbourSymbol := range currentSymbol.down {
+		for _, neigbourSymbol := range currentSymbol.Down {
 			fmt.Print(neigbourSymbol, " ")
 		}
 		fmt.Println("\n----L")
 
-		for _, neigbourSymbol := range currentSymbol.left {
+		for _, neigbourSymbol := range currentSymbol.Left {
 			fmt.Print(neigbourSymbol, currentSymbol.Icon)
 			fmt.Print("  ")
 		}
 		fmt.Println("\n----R")
-		for _, neigbourSymbol := range currentSymbol.right {
+		for _, neigbourSymbol := range currentSymbol.Right {
 			fmt.Print(currentSymbol.Icon, neigbourSymbol)
 			fmt.Print("  ")
 		}
