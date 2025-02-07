@@ -1,20 +1,10 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/veandco/go-sdl2/sdl"
 )
-
-type gameData struct {
-	window      *sdl.Window
-	surface     *sdl.Surface
-	gameObjects *[]gameObject
-}
-type gameObject struct {
-	rect      sdl.Rect
-	color     sdl.Color
-	pixel     uint32
-	direction int8
-}
 
 func main() {
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
@@ -34,30 +24,28 @@ func main() {
 		panic(err)
 	}
 
-	gameData := gameData{window: window, surface: surface, gameObjects: &[]gameObject{}}
+	state := gameState{window: window, surface: surface, gameObjects: &[]Object{}}
 	surface.FillRect(nil, 0)
 
-	rect := sdl.Rect{120, 0, 20, 20}
-	colour := sdl.Color{R: 255, G: 0, B: 255, A: 255} // purple
-	pixel := sdl.MapRGBA(surface.Format, colour.R, colour.G, colour.B, colour.A)
-	surface.FillRect(&rect, pixel)
+	MAGENTA = sdl.MapRGBA(state.surface.Format, 231, 0, 106, 255)
+	ORANGE = sdl.MapRGBA(state.surface.Format, 243, 152, 1, 255)
+	YELLOW = sdl.MapRGBA(state.surface.Format, 248, 248, 69, 255)
+	BLUE = sdl.MapRGBA(state.surface.Format, 1, 104, 183, 255)
+	CYAN = sdl.MapRGBA(state.surface.Format, 50, 103, 183, 255)
+	RED = sdl.MapRGBA(state.surface.Format, 255, 0, 0, 255)
 
-	player := gameObject{rect: rect, color: colour, pixel: pixel, direction: 10}
-	*(gameData.gameObjects) = append(*gameData.gameObjects, player)
+	initObject(&state, MAGENTA, 0, 0, 60, 60)
+	initObject(&state, BLUE, 60, 0, 60, 60)
+	initObject(&state, ORANGE, 120, 0, 60, 60)
+	initObject(&state, YELLOW, 180, 0, 60, 60)
+	initObject(&state, CYAN, 240, 0, 60, 60)
+	initObject(&state, RED, 240, 0, 60, 60)
 
-	colour2 := sdl.Color{R: 255, G: 23, B: 123, A: 255} // purple
-	pixel2 := sdl.MapRGBA(surface.Format, colour2.R, colour2.G, colour2.B, colour2.A)
-	rect2 := sdl.Rect{400, 300, 40, 40}
-
-	obj := gameObject{rect: rect2, color: colour2, pixel: pixel2, direction: 0}
-	*(gameData.gameObjects) = append(*gameData.gameObjects, obj)
-
+	fmt.Println(state.nextID, state.gameObjects)
 	window.UpdateSurface()
 
 	running := true
-	frame := 0
 	for running {
-		frame++
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch event.(type) {
 			case *sdl.QuitEvent:
@@ -66,37 +54,10 @@ func main() {
 				break
 			}
 		}
-		if frame == 20 {
-			frame = 0
-			Update(&gameData)
-			println((*gameData.gameObjects)[0].rect.X)
-			drawAllGameObjects(gameData)
-		}
+		Update(&state)
+		drawAllGameObjects(state)
 
+		sdl.Delay(16)
 	}
-	println("Stop")
 	window.UpdateSurface()
-}
-
-func drawAllGameObjects(gameData gameData) {
-	gameData.surface.FillRect(nil, 0)
-
-	for _, obj := range *gameData.gameObjects {
-		gameData.surface.FillRect(&obj.rect, obj.pixel)
-	}
-	gameData.window.UpdateSurface()
-}
-
-func Update(gameData *gameData) {
-	obj := &(*gameData.gameObjects)[0]
-	rect := &obj.rect
-	if rect.X+int32(obj.direction) > 700 && obj.direction > 0 {
-		obj.direction *= -1
-	}
-	if rect.X+int32(obj.direction) < 10 && obj.direction < 0 {
-		obj.direction *= -1
-	}
-	rect.X = rect.X + int32(obj.direction)
-
-	// Kinda Update
 }
