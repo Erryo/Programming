@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"math/rand"
 	"os"
 	"time"
 
@@ -32,16 +31,59 @@ func main() {
 	programStartTime := time.Now()
 	connections.Side()
 	table := createAndSetupTable()
-	drawGrid(&table)
 	// Pick random to collapse
-	y, x := rand.Intn(H), rand.Intn(W)
-	z := rand.Intn(connections.TOTAL_ICONS)
-	table[y][x].Entropy = 0
-	table[y][x].Symbol = connections.IconSymbolMap[table[y][x].Possibilities[z]]
-	table[y][x].Possibilities = []string{table[y][x].Symbol.Icon}
+	// y, x := rand.Intn(H), rand.Intn(W)
+	y, x := 3, 3
+	// z := rand.Intn(connections.TOTAL_ICONS)
+	z := 3
+	self := table[y][x]
+	self.Entropy = 0
+	self.Symbol = connections.IconSymbolMap[self.Possibilities[z]]
+	self.Possibilities = []string{self.Symbol.Icon}
 
+	table[y][x] = self
+	drawGrid(&table)
+	win.Refresh()
 	// propagate
-	Bio(&table, x, y)
+
+	// NEED:A func to propagate the changes of the initial collapse
+	var modified bool
+	if x+1 < W-1 {
+		// Possible issue : not actually changing the values in the table
+		log.Println("R", x, y)
+		possibilities := unifyPossibilities(self, 3)
+		log.Println(possibilities)
+		table[y][x+1].Possibilities, modified = simpleAND(table[y][x+1].Possibilities, possibilities)
+		if modified {
+			Bio(&table, x+1, y)
+		}
+	}
+	if x-1 >= 0 {
+		log.Println("L", x, y)
+		possibilities := unifyPossibilities(self, 1)
+		table[y][x-1].Possibilities, modified = simpleAND(table[y][x-1].Possibilities, possibilities)
+		if modified {
+			Bio(&table, x-1, y)
+		}
+	}
+	if y+1 < H-1 {
+		log.Println("U", x, y)
+		possibilities := unifyPossibilities(self, 0)
+		table[y+1][x].Possibilities, modified = simpleAND(table[y+1][x].Possibilities, possibilities)
+		if modified {
+			Bio(&table, x, y+1)
+		}
+	}
+	if y-1 >= 0 {
+		log.Println("D", x, y)
+		possibilities := unifyPossibilities(self, 2)
+		table[y-1][x].Possibilities, modified = simpleAND(table[y-1][x].Possibilities, possibilities)
+		if modified {
+			Bio(&table, x, y+1)
+		}
+	}
+
+	//
 	drawGrid(&table)
 	//...?
 	win.Refresh()
@@ -55,44 +97,51 @@ func main() {
 
 // Recursive
 func Bio(table *([H][W]connections.Tile), x, y int) {
-	// Check bounds.
-
 	self := table[y][x]
-	self.Entropy = uint8(len(self.Possibilities))
-	var modified bool
+	table[y][x].Entropy = uint8(len(self.Possibilities))
+	log.Println(x, y, table[y][x].Possibilities, table[y][x].Entropy)
 	// return bool if need be continued ?
-	if x+1 < W {
+	if x+1 < W-1 && table[y][x+1].Entropy > 1 {
 		// Possible issue : not actually changing the values in the table
-		log.Print("Bio Right")
 		possibilities := unifyPossibilities(self, 3)
-		log.Print(possibilities)
-		table[y][x+1].Possibilities, modified = simpleAND(table[y][x+1].Possibilities, possibilities)
+		log.Println("r", possibilities)
+		result, modified := simpleAND(table[y][x+1].Possibilities, possibilities)
 		if modified {
+			table[y][x+1].Entropy = uint8(len(result))
+			table[y][x+1].Possibilities = result
 			Bio(table, x+1, y)
 		}
 	}
-	if x-1 >= 0 {
+	if x-1 >= 0 && table[y][x-1].Entropy != 0 {
 		possibilities := unifyPossibilities(self, 1)
-		table[y][x-1].Possibilities, modified = simpleAND(table[y][x-1].Possibilities, possibilities)
+		log.Println("l", possibilities)
+		result, modified := simpleAND(table[y][x-1].Possibilities, possibilities)
 		if modified {
+			table[y][x-1].Entropy = uint8(len(result))
+			table[y][x-1].Possibilities = result
 			Bio(table, x-1, y)
 		}
 	}
-	if y+1 < H {
+	if y+1 < H-1 && table[y+1][x].Entropy != 0 {
 		possibilities := unifyPossibilities(self, 0)
-		table[y+1][x].Possibilities, modified = simpleAND(table[y+1][x].Possibilities, possibilities)
+		log.Println("u", possibilities)
+		result, modified := simpleAND(table[y+1][x].Possibilities, possibilities)
 		if modified {
+			table[y+1][x].Entropy = uint8(len(result))
+			table[y+1][x].Possibilities = result
 			Bio(table, x, y+1)
 		}
 	}
-	if y-1 >= 0 {
+	if y-1 >= 0 && table[y-1][x].Entropy != 0 {
 		possibilities := unifyPossibilities(self, 2)
-		table[y-1][x].Possibilities, modified = simpleAND(table[y-1][x].Possibilities, possibilities)
+		log.Println("d", possibilities)
+		result, modified := simpleAND(table[y-1][x].Possibilities, possibilities)
 		if modified {
-			Bio(table, x, y+1)
+			table[y-1][x].Entropy = uint8(len(result))
+			table[y-1][x].Possibilities = result
+			Bio(table, x, y-1)
 		}
 	}
-	return
 
 	// table[y+1][x] // T
 	// table[y][x-1] // L
@@ -100,30 +149,30 @@ func Bio(table *([H][W]connections.Tile), x, y int) {
 	// table[y][x+1] // R
 }
 
-// Create new array to unify all Possibilities
-// Takes in the Tile, uses only its Possibilities , to create one list of possible symbols for the next tile
+// iterates over each possibility of a tile
+// to create a new list of accpted values in a specified direction
 // 0 T , 1 L , 2 D , 3 R
 func unifyPossibilities(a connections.Tile, direction uint8) []string {
 	tempMap := make(map[string]string)
 	result := []string{}
-	for _, symbol := range a.Possibilities {
+	for _, aIcon := range a.Possibilities {
 		if direction == 0 {
-			for _, icon := range connections.IconSymbolMap[symbol].Up {
+			for _, icon := range connections.IconSymbolMap[aIcon].Up {
 				tempMap[icon] = icon
 			}
 		}
 		if direction == 1 {
-			for _, icon := range connections.IconSymbolMap[symbol].Left {
+			for _, icon := range connections.IconSymbolMap[aIcon].Left {
 				tempMap[icon] = icon
 			}
 		}
 		if direction == 2 {
-			for _, icon := range connections.IconSymbolMap[symbol].Down {
+			for _, icon := range connections.IconSymbolMap[aIcon].Down {
 				tempMap[icon] = icon
 			}
 		}
 		if direction == 3 {
-			for _, icon := range connections.IconSymbolMap[symbol].Right {
+			for _, icon := range connections.IconSymbolMap[aIcon].Right {
 				tempMap[icon] = icon
 			}
 		}
@@ -142,16 +191,22 @@ func unifyPossibilities(a connections.Tile, direction uint8) []string {
 func simpleAND(a, b []string) ([]string, bool) {
 	// keep track if it made any changes
 	var modified bool
+	var noMatches uint8
 	result := []string{}
 outer:
 	for _, Ai := range a {
 		for _, Bi := range b {
 			if Ai == Bi {
 				modified = true
+				noMatches++
 				result = append(result, Ai)
 				continue outer
 			}
 		}
+	}
+	// if all elements match then there was no change
+	if int(noMatches) == len(a) {
+		modified = false
 	}
 	return result, modified
 }
