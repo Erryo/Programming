@@ -5,7 +5,7 @@ import "github.com/veandco/go-sdl2/sdl"
 // Better called level state
 type gameState struct {
 	window       *sdl.Window
-	surface      *sdl.Surface
+	renderer     *sdl.Renderer
 	gameObjects  *[]Object
 	cameraTarget *Object
 	nextID       uint16
@@ -18,12 +18,17 @@ type Object struct {
 	direction int8
 }
 
-// Colors as pixel
+const (
+	WINDOW_WIDTH  = 800
+	WINDOW_HEIGHT = 600
+)
+
+// Colors
 var (
-	MAGENTA uint32
-	ORANGE  uint32
-	YELLOW  uint32
-	BLUE    uint32
-	CYAN    uint32
-	RED     uint32
+	MAGENTA = [3]uint8{231, 0, 106}
+	ORANGE  = [3]uint8{243, 152, 1}
+	YELLOW  = [3]uint8{248, 248, 69}
+	BLUE    = [3]uint8{1, 104, 183}
+	CYAN    = [3]uint8{50, 103, 183}
+	RED     = [3]uint8{255, 0, 0}
 )
