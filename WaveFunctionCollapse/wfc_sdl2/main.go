@@ -1,6 +1,8 @@
 package main
 
-import "github.com/veandco/go-sdl2/sdl"
+import (
+	"github.com/veandco/go-sdl2/sdl"
+)
 
 func main() {
 	var err error
@@ -9,8 +11,8 @@ func main() {
 	}
 	defer sdl.Quit()
 
-	window, err := sdl.CreateWindow("Shape Generator", sdl.WINDOWPOS_CENTERED, sdl.WINDOWPOS_CENTERED,
-		800, 800, sdl.WINDOW_SHOWN)
+	window, err := sdl.CreateWindow("WFC", sdl.WINDOWPOS_CENTERED, sdl.WINDOWPOS_CENTERED,
+		WIN_W, WIN_H, sdl.WINDOW_SHOWN)
 	if err != nil {
 		panic(err)
 	}
@@ -20,10 +22,14 @@ func main() {
 		panic(err)
 	}
 
-	sdl.Quit()
-	generateMap()
+	state := state{renderer: renderer, window: window}
+	(&state).loadAtlas()
+	wave := createWave()
+	state.wave = &wave
 
-	running := false
+	go generateMap(&state)
+
+	running := true
 
 	for running {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
@@ -46,6 +52,7 @@ func main() {
 		renderer.Clear()
 		renderer.SetDrawColor(255, 255, 255, 255)
 
+		state.drawWave()
 		renderer.Present()
 	}
 }

@@ -1,6 +1,13 @@
 package main
 
-type tile struct{}
+import "github.com/veandco/go-sdl2/sdl"
+
+type state struct {
+	renderer  *sdl.Renderer
+	window    *sdl.Window
+	tileAtlas *sdl.Texture
+	wave      *[MAP_H][MAP_W][TOTAL_TILES]bool
+}
 
 const (
 	WIN_W       = 1920

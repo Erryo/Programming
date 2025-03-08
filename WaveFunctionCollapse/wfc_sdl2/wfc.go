@@ -5,21 +5,33 @@ import (
 	"math/rand"
 )
 
-func generateMap() {
+func generateMap(state *state) {
 	wave := createWave()
+	state.wave = &wave
+	finished := false
 
 	cellX, cellY := getRandomCell(wave)
 	collapseCell(&wave[cellY][cellX])
 	propagate(&wave, cellX, cellY)
 
-	coordinates := getLowestEntropy(wave)
-	if len(coordinates) == 0 {
-		panic("coordinates empty")
-	}
+	var coordinates [][2]int
+	for !finished {
 
-	coordToCollapse := coordinates[rand.Intn(len(coordinates))]
-	cellToCollapse := &wave[coordToCollapse[1]][coordToCollapse[0]]
-	collapseCell(cellToCollapse)
+		coordinates, finished = getLowestEntropy(wave)
+		fmt.Println(len(coordinates))
+		if len(coordinates) == 0 {
+			cellX, cellY = getRandomCell(wave)
+			collapseCell(&wave[cellY][cellX])
+			propagate(&wave, cellX, cellY)
+			continue
+
+		}
+
+		coordToCollapse := coordinates[rand.Intn(len(coordinates))]
+		cellToCollapse := &wave[coordToCollapse[1]][coordToCollapse[0]]
+		collapseCell(cellToCollapse)
+	}
+	fmt.Println("done")
 }
 
 // x,y are the coordinates of the recent collapse
@@ -56,13 +68,14 @@ func getRandomCell(wave [MAP_H][MAP_W][TOTAL_TILES]bool) (int, int) {
 	return -1, -1
 }
 
-func getLowestEntropy(wave [MAP_H][MAP_W][TOTAL_TILES]bool) [][2]int {
+func getLowestEntropy(wave [MAP_H][MAP_W][TOTAL_TILES]bool) ([][2]int, bool) {
 	var lowestEntropy uint8
 	var lowestEntropyY int
 	var lowestEntropyX int
 
 	var coordinates [][2]int
 	var cell_Entropy uint8
+	finished := true
 
 	lowestEntropy = TOTAL_TILES
 
@@ -70,24 +83,26 @@ func getLowestEntropy(wave [MAP_H][MAP_W][TOTAL_TILES]bool) [][2]int {
 	traverseRow:
 		for x, cell := range row {
 			cell_Entropy = getEntropy(cell)
-			if cell_Entropy == 1 || cell_Entropy == TOTAL_TILES {
+			if cell_Entropy == 1 {
 				continue traverseRow
 			}
+			finished = false
+
 			if cell_Entropy == lowestEntropy {
 				coordinates = append(coordinates, [2]int{x, y})
 				continue traverseRow
 			}
 
 			if cell_Entropy < lowestEntropy {
+				coordinates = [][2]int{}
 				lowestEntropy = cell_Entropy
 				lowestEntropyY = y
 				lowestEntropyX = x
-				coordinates = [][2]int{}
 			}
 		}
 	}
-	fmt.Println("IGNORE THIS MESSAGE", lowestEntropyX, lowestEntropyY)
-	return coordinates
+	fmt.Println(finished, "IGNORE THIS MESSAGE", lowestEntropyX, lowestEntropyY)
+	return coordinates, finished
 }
 
 func getEntropy(cell [TOTAL_TILES]bool) (entropy uint8) {
