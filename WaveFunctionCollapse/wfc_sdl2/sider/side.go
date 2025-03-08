@@ -1,0 +1,4 @@
+package sider
+
+func Side() {
+}

@@ -9,9 +9,17 @@ type state struct {
 	wave      *[MAP_H][MAP_W][TOTAL_TILES]bool
 }
 
+type TileModel struct {
+	index int
+	top   []int
+	left  []int
+	down  []int
+	right []int
+}
+
 const (
-	WIN_W       = 1920
-	WIN_H       = 1080
+	WIN_W       = 1020
+	WIN_H       = 900
 	MAP_W       = 10
 	MAP_H       = 10
 	TOTAL_TILES = 5

@@ -34,8 +34,30 @@ func generateMap(state *state) {
 	fmt.Println("done")
 }
 
-// x,y are the coordinates of the recent collapse
 func propagate(wave *[MAP_H][MAP_W][TOTAL_TILES]bool, x, y int) {
+	// Bounds Check
+	// collapsed Check
+	if x > MAP_W || x < 0 {
+		return
+	}
+	if y > MAP_H || y < 0 {
+		return
+	}
+	if getEntropy(wave[y][x]) == 1 {
+		return
+	}
+	if y+1 < MAP_H {
+		wave[y+1][x] = boolAnd((*wave)[y+1][x], (*wave)[y][x])
+	}
+}
+
+func boolAnd(a, b [TOTAL_TILES]bool) (c [TOTAL_TILES]bool) {
+	for i := range a {
+		if a[i] == b[i] {
+			c[i] = a[i]
+		}
+	}
+	return c
 }
 
 func collapseCell(cell *[TOTAL_TILES]bool) {

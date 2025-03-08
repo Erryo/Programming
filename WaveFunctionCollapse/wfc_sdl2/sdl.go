@@ -9,13 +9,23 @@ import (
 )
 
 func (state state) drawWave() {
-	borderRect := sdl.Rect{X: 40, Y: 40, W: MAP_W * 32, H: MAP_H * 32}
+	winW, winH := state.window.GetSize()
+
+	tileSize := (winW - 80) / MAP_W
+	if winH < winW {
+		tileSize = (winH - 80) / MAP_H
+	}
+	mapStartX := (winW - tileSize*MAP_W) / 2
+	mapStartY := (winH - tileSize*MAP_H) / 2
+
+	borderRect := sdl.Rect{X: mapStartX - 1, Y: mapStartY - 1, W: MAP_W*tileSize + 2, H: MAP_H*tileSize + 2}
+	state.renderer.SetDrawColor(255, 0, 0, 255)
 	state.renderer.DrawRect(&borderRect)
-	//
-	// (WIN_W - 80)/TOTAL_TILES
-	empty := sdl.Rect{X: 32 * 5, Y: 0, W: 32, H: 32}
+	state.renderer.SetDrawColor(255, 255, 255, 255)
+
+	empty := sdl.Rect{X: 32 * 5, Y: 0, W: tileSize, H: tileSize}
 	src := sdl.Rect{X: 0, Y: 0, W: 32, H: 32}
-	dst := sdl.Rect{X: 40, Y: 40, W: 32, H: 32}
+	dst := sdl.Rect{X: mapStartX, Y: mapStartY, W: tileSize, H: tileSize}
 
 	for _, row := range state.wave {
 		for _, cell := range row {
@@ -27,12 +37,19 @@ func (state state) drawWave() {
 				state.renderer.Copy(state.tileAtlas, &empty, &dst)
 			}
 
-			dst.X += 32
-			if dst.X >= (MAP_W*32)+40 {
-				dst.X = 40
-				dst.Y += 32
+			dst.X += tileSize
+			if dst.X >= (MAP_W*tileSize)+mapStartX {
+				dst.X = mapStartX
+				dst.Y += tileSize
 			}
 		}
+	}
+
+	state.renderer.SetDrawColor(255, 0, 0, 255)
+	for j := range MAP_W {
+		i := int32(j)
+		state.renderer.DrawLine(mapStartX+(i+1)*tileSize, mapStartY, mapStartX+(i+1)*tileSize, tileSize*MAP_H+mapStartY)
+		state.renderer.DrawLine(mapStartX, mapStartY+(i+1)*tileSize, tileSize*MAP_W+mapStartX, mapStartY+(i+1)*tileSize)
 	}
 }
 
