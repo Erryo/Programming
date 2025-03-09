@@ -27,6 +27,8 @@ func main() {
 	wave := createWave()
 	state.wave = &wave
 
+	side()
+	return
 	go generateMap(&state)
 
 	running := true

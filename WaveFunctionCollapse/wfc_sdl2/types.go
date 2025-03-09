@@ -10,11 +10,11 @@ type state struct {
 }
 
 type TileModel struct {
-	index int
-	top   []int
-	left  []int
-	down  []int
-	right []int
+	Index int
+	Top   []int
+	Left  []int
+	Down  []int
+	Right []int
 }
 
 const (
