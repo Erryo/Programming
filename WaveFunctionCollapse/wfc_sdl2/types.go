@@ -11,10 +11,10 @@ type state struct {
 
 type TileModel struct {
 	Index int
-	Top   []int
-	Left  []int
-	Down  []int
-	Right []int
+	Top   [TOTAL_TILES]bool
+	Left  [TOTAL_TILES]bool
+	Down  [TOTAL_TILES]bool
+	Right [TOTAL_TILES]bool
 }
 
 const (

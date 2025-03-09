@@ -3,26 +3,29 @@ package main
 import (
 	"fmt"
 	"math/rand"
+
+	"github.com/veandco/go-sdl2/sdl"
 )
 
 func generateMap(state *state) {
 	wave := createWave()
+	models := getTileModel()
 	state.wave = &wave
 	finished := false
 
 	cellX, cellY := getRandomCell(wave)
 	collapseCell(&wave[cellY][cellX])
-	propagate(&wave, cellX, cellY)
+	propagate(&wave, cellX, cellY, models)
 
 	var coordinates [][2]int
 	for !finished {
 
+		sdl.Delay(10000)
 		coordinates, finished = getLowestEntropy(wave)
-		fmt.Println(len(coordinates))
 		if len(coordinates) == 0 {
 			cellX, cellY = getRandomCell(wave)
 			collapseCell(&wave[cellY][cellX])
-			propagate(&wave, cellX, cellY)
+			propagate(&wave, cellX, cellY, models)
 			continue
 
 		}
@@ -30,34 +33,72 @@ func generateMap(state *state) {
 		coordToCollapse := coordinates[rand.Intn(len(coordinates))]
 		cellToCollapse := &wave[coordToCollapse[1]][coordToCollapse[0]]
 		collapseCell(cellToCollapse)
+		propagate(&wave, cellX, cellY, models)
 	}
 	fmt.Println("done")
 }
 
-func propagate(wave *[MAP_H][MAP_W][TOTAL_TILES]bool, x, y int) {
+func propagate(wave *[MAP_H][MAP_W][TOTAL_TILES]bool, x, y int, models []TileModel) {
 	// Bounds Check
 	// collapsed Check
+	fmt.Println("staret")
 	if x > MAP_W || x < 0 {
 		return
 	}
 	if y > MAP_H || y < 0 {
 		return
 	}
-	if getEntropy(wave[y][x]) == 1 {
-		return
-	}
+	//	if getEntropy(wave[y][x]) == 1 {
+	//		return
+	//	}
+	fmt.Println("avoided")
+	var reducedEntropy bool
+	idxCurrentTile := getIndex((*wave)[y][x])
+
 	if y+1 < MAP_H {
-		wave[y+1][x] = boolAnd((*wave)[y+1][x], (*wave)[y][x])
+		fmt.Println(wave[y+1][x])
+		wave[y+1][x], reducedEntropy = boolAnd((*wave)[y+1][x], models[idxCurrentTile].Top)
+		fmt.Println(wave[y+1][x])
+		if reducedEntropy && len(wave[y+1][x]) != TOTAL_TILES {
+			propagate(wave, x, y+1, models)
+		}
+	}
+	if y-1 > 0 {
+		fmt.Println(wave[y-1][x])
+		wave[y-1][x], reducedEntropy = boolAnd((*wave)[y-1][x], models[idxCurrentTile].Down)
+		fmt.Println(wave[y-1][x])
+		if reducedEntropy && len(wave[y-1][x]) != TOTAL_TILES {
+			propagate(wave, x, y-1, models)
+		}
+	}
+	if x+1 < MAP_W {
+		fmt.Println(wave[y][x+1])
+		wave[y][x+1], reducedEntropy = boolAnd((*wave)[y][x+1], models[idxCurrentTile].Right)
+		fmt.Println(wave[y][x+1])
+		if reducedEntropy && len(wave[y][x+1]) != TOTAL_TILES {
+			propagate(wave, x+1, y, models)
+		}
+	}
+	if x-1 > 0 {
+		fmt.Println(wave[y][x-1])
+		wave[y][x-1], reducedEntropy = boolAnd((*wave)[y][x-1], models[idxCurrentTile].Left)
+		fmt.Println(wave[y][x-1])
+		if reducedEntropy && len(wave[y][x-1]) != TOTAL_TILES {
+			propagate(wave, x+1, y, models)
+		}
 	}
 }
 
-func boolAnd(a, b [TOTAL_TILES]bool) (c [TOTAL_TILES]bool) {
+func boolAnd(a, b [TOTAL_TILES]bool) (c [TOTAL_TILES]bool, reducedEntropy bool) {
 	for i := range a {
 		if a[i] == b[i] {
 			c[i] = a[i]
+			reducedEntropy = false
+			continue
 		}
+		reducedEntropy = true
 	}
-	return c
+	return c, reducedEntropy
 }
 
 func collapseCell(cell *[TOTAL_TILES]bool) {
@@ -92,8 +133,6 @@ func getRandomCell(wave [MAP_H][MAP_W][TOTAL_TILES]bool) (int, int) {
 
 func getLowestEntropy(wave [MAP_H][MAP_W][TOTAL_TILES]bool) ([][2]int, bool) {
 	var lowestEntropy uint8
-	var lowestEntropyY int
-	var lowestEntropyX int
 
 	var coordinates [][2]int
 	var cell_Entropy uint8
@@ -116,14 +155,11 @@ func getLowestEntropy(wave [MAP_H][MAP_W][TOTAL_TILES]bool) ([][2]int, bool) {
 			}
 
 			if cell_Entropy < lowestEntropy {
-				coordinates = [][2]int{}
+				coordinates = [][2]int{{x, y}}
 				lowestEntropy = cell_Entropy
-				lowestEntropyY = y
-				lowestEntropyX = x
 			}
 		}
 	}
-	fmt.Println(finished, "IGNORE THIS MESSAGE", lowestEntropyX, lowestEntropyY)
 	return coordinates, finished
 }
 

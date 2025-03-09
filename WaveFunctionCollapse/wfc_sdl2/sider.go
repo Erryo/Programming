@@ -24,12 +24,15 @@ func side() {
 
 func initModels(noTiles int) []TileModel {
 	models := make([]TileModel, noTiles)
-	//possibilities := make([]int, noTiles)
-	//model := TileModel{index: 0, top: possibilities, left: possibilities, right: possibilities, down: possibilities}
-	//for i := range models {
-	//	model.index = i
-	//	models[i] = model
-	//}
+	model := TileModel{}
+	for i := range models {
+		model.Index = i
+		model.Right = [5]bool{}
+		model.Left = [5]bool{}
+		model.Down = [5]bool{}
+		model.Top = [5]bool{}
+		models[i] = model
+	}
 	return models
 }
 
@@ -42,8 +45,8 @@ func connect(idxA, idxB int, shapes [][9]bool, models *[]TileModel) {
 
 	a := shapes[idxA]
 	b := shapes[idxB]
-	modelA := (*models)[idxA]
-	modelB := (*models)[idxB]
+	modelA := &(*models)[idxA]
+	modelB := &(*models)[idxB]
 	modelA.Index = idxA
 	modelB.Index = idxB
 
@@ -56,8 +59,8 @@ func connect(idxA, idxB int, shapes [][9]bool, models *[]TileModel) {
 		}
 	}
 	if valid {
-		modelA.Top = append(modelA.Top, idxB)
-		modelB.Down = append(modelB.Down, idxA)
+		modelA.Top[idxB] = true
+		modelB.Down[idxA] = true
 	}
 	valid = true
 
@@ -69,8 +72,8 @@ func connect(idxA, idxB int, shapes [][9]bool, models *[]TileModel) {
 		}
 	}
 	if valid {
-		modelA.Down = append(modelA.Down, idxB)
-		modelB.Top = append(modelB.Top, idxA)
+		modelA.Down[idxB] = true
+		modelB.Top[idxA] = true
 	}
 	valid = true
 
@@ -82,8 +85,8 @@ func connect(idxA, idxB int, shapes [][9]bool, models *[]TileModel) {
 		}
 	}
 	if valid {
-		modelA.Left = append(modelA.Left, idxB)
-		modelB.Right = append(modelB.Right, idxA)
+		modelA.Left[idxB] = true
+		modelB.Right[idxA] = true
 	}
 	valid = true
 
@@ -95,12 +98,10 @@ func connect(idxA, idxB int, shapes [][9]bool, models *[]TileModel) {
 		}
 	}
 	if valid {
-		modelA.Right = append(modelA.Right, idxB)
-		modelB.Left = append(modelB.Left, idxA)
+		modelA.Right[idxB] = true
+		modelB.Left[idxA] = true
 	}
 	valid = true
-	(*models)[idxA] = modelA
-	(*models)[idxB] = modelB
 }
 
 func getTileModel() []TileModel {
@@ -145,6 +146,7 @@ func setTileModel(models []TileModel) {
 	file, err := os.OpenFile("media/tileModel.json", os.O_TRUNC|os.O_WRONLY, 0600)
 	if err != nil {
 		fmt.Print("error opening file: tileModel.json", err)
+		return
 	}
 	defer file.Close()
 
@@ -159,6 +161,7 @@ func setTileShape(shapes [][9]bool) {
 	file, err := os.OpenFile("media/tileShape.json", os.O_TRUNC|os.O_WRONLY, 0600)
 	if err != nil {
 		fmt.Print("error opening file: tileShape.json", err)
+		return
 	}
 	defer file.Close()
 
