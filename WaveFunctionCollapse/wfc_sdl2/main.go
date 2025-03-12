@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/veandco/go-sdl2/sdl"
+	"github.com/veandco/go-sdl2/ttf"
 )
 
 func main() {
@@ -22,10 +23,39 @@ func main() {
 		panic(err)
 	}
 
+	if err := ttf.Init(); err != nil {
+		panic(err)
+	}
+	font, err := ttf.OpenFont("media/ka1.ttf", 32)
+	if err != nil {
+		panic(err)
+	}
+	zero, err := font.RenderUTF8Solid("0", sdl.Color{255, 0, 0, 0})
+	one, err := font.RenderUTF8Solid("1", sdl.Color{255, 0, 0, 0})
+	two, err := font.RenderUTF8Solid("2", sdl.Color{255, 0, 0, 0})
+	three, err := font.RenderUTF8Solid("3", sdl.Color{255, 0, 0, 0})
+	four, err := font.RenderUTF8Solid("4", sdl.Color{255, 0, 0, 0})
+	five, err := font.RenderUTF8Solid("5", sdl.Color{255, 0, 0, 0})
+	t0, err := renderer.CreateTextureFromSurface(zero)
+	t1, err := renderer.CreateTextureFromSurface(one)
+	t2, err := renderer.CreateTextureFromSurface(two)
+	t3, err := renderer.CreateTextureFromSurface(three)
+	t4, err := renderer.CreateTextureFromSurface(four)
+	t5, err := renderer.CreateTextureFromSurface(five)
+	zero.Free()
+	one.Free()
+	two.Free()
+	three.Free()
+	four.Free()
+	five.Free()
+
 	state := state{renderer: renderer, window: window}
 	(&state).loadAtlas()
+	state.tileAtlas.SetBlendMode(sdl.BLENDMODE_BLEND)
 	wave := createWave()
 	state.wave = &wave
+
+	state.textTexture = [](*sdl.Texture){t0, t1, t2, t3, t4, t5}
 
 	go generateMap(&state)
 

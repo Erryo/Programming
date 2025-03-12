@@ -23,7 +23,7 @@ func (state state) drawWave() {
 	state.renderer.DrawRect(&borderRect)
 	state.renderer.SetDrawColor(255, 255, 255, 255)
 
-	empty := sdl.Rect{X: 32 * 5, Y: 0, W: tileSize, H: tileSize}
+	//	empty := sdl.Rect{X: 32 * 5, Y: 0, W: tileSize, H: tileSize}
 	src := sdl.Rect{X: 0, Y: 0, W: 32, H: 32}
 	dst := sdl.Rect{X: mapStartX, Y: mapStartY, W: tileSize, H: tileSize}
 
@@ -34,7 +34,17 @@ func (state state) drawWave() {
 				src.X = int32(idx) * 32
 				state.renderer.Copy(state.tileAtlas, &src, &dst)
 			} else {
-				state.renderer.Copy(state.tileAtlas, &empty, &dst)
+				if err := state.tileAtlas.SetAlphaMod(100); err != nil {
+					panic(err)
+				}
+				for i, v := range cell {
+					if v {
+						src.X = int32(i) * 32
+						state.renderer.Copy(state.tileAtlas, &src, &dst)
+					}
+				}
+				state.tileAtlas.SetAlphaMod(255)
+				state.renderer.Copy(state.textTexture[getEntropy(cell)], nil, &sdl.Rect{dst.X, dst.Y, tileSize / 5, tileSize / 5})
 			}
 
 			dst.X += tileSize
@@ -51,6 +61,8 @@ func (state state) drawWave() {
 		state.renderer.DrawLine(mapStartX+(i+1)*tileSize, mapStartY, mapStartX+(i+1)*tileSize, tileSize*MAP_H+mapStartY)
 		state.renderer.DrawLine(mapStartX, mapStartY+(i+1)*tileSize, tileSize*MAP_W+mapStartX, mapStartY+(i+1)*tileSize)
 	}
+	state.renderer.SetDrawColor(0, 255, 0, 255)
+	state.renderer.DrawRect(&sdl.Rect{X: (int32(state.selected[0]) * tileSize) + mapStartX, Y: (int32(state.selected[1]) * tileSize) + mapStartY, W: tileSize, H: tileSize})
 }
 
 func printWave(state state) {

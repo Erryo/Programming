@@ -8,7 +8,6 @@ import (
 
 func side() {
 	shapes := getTileShape()
-	fmt.Println(shapes)
 	//!!!FUZZY
 
 	models := initModels(len(shapes))
@@ -43,6 +42,9 @@ func connect(idxA, idxB int, shapes [][9]bool, models *[]TileModel) {
 	// 0,0+3,0+6 L
 	// 2,2+3,2+6 R
 
+	if idxB == 4 {
+		fmt.Println("Hit", shapes[idxA], shapes[idxB])
+	}
 	a := shapes[idxA]
 	b := shapes[idxB]
 	modelA := &(*models)[idxA]
@@ -53,7 +55,7 @@ func connect(idxA, idxB int, shapes [][9]bool, models *[]TileModel) {
 	// Check A's Top with B's Bottom
 	valid := true
 	for i := 0; i <= 2; i++ {
-		if a[i] != b[8-i] {
+		if a[i] != b[6+i] {
 			valid = false
 			break
 		}
@@ -66,7 +68,7 @@ func connect(idxA, idxB int, shapes [][9]bool, models *[]TileModel) {
 
 	// Check A's Bottom with B's Top
 	for i := 0; i <= 2; i++ {
-		if a[8-i] != b[i] {
+		if a[6+i] != b[i] {
 			valid = false
 			break
 		}
@@ -98,6 +100,9 @@ func connect(idxA, idxB int, shapes [][9]bool, models *[]TileModel) {
 		}
 	}
 	if valid {
+		if idxB == 4 {
+			fmt.Println("Right")
+		}
 		modelA.Right[idxB] = true
 		modelB.Left[idxA] = true
 	}

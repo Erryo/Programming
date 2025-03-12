@@ -3,10 +3,12 @@ package main
 import "github.com/veandco/go-sdl2/sdl"
 
 type state struct {
-	renderer  *sdl.Renderer
-	window    *sdl.Window
-	tileAtlas *sdl.Texture
-	wave      *[MAP_H][MAP_W][TOTAL_TILES]bool
+	renderer    *sdl.Renderer
+	window      *sdl.Window
+	selected    [2]int
+	textTexture []*sdl.Texture
+	tileAtlas   *sdl.Texture
+	wave        *[MAP_H][MAP_W][TOTAL_TILES]bool
 }
 
 type TileModel struct {
