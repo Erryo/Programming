@@ -1,32 +1,20 @@
 # My Programming Projects
 
 This repository contains all the projects and side projects I create. Its purpose is to make my code public so I do not lose it. Additionally, if someone encounters errors while using my code, they can report them through GitHub issues, allowing me to address and fix them. I also hope this repository will serve as my portfolio.
-## Features
 
-- Collection of various projects and side projects.
-- Written in Python and Go.
-- Open for public use and feedback through GitHub issues.
-
-## Installation
-
-This repository is not meant to be installed. But if you would like to use the code, simply clone the repository:
-```sh
-git clone https://github.com/Erryo/Programming.git
-```
 ## Projects
 Here are the current projects included in this repository:
+- BPY script to animate a [LightPipe](https://cccgoe.de/projekte/lightpipe.html) in 3D
 - Calculator
-- Cryptography
+- Cryptography (Caesar Cypher)
 - ExpenseTracker
-- ForBeginners
 - Hangman
 - PrimeagenAlgorithms
 - TicTacToeOld
-- ToDo
+- IDoToo
 - WaveFunctionCollapse
 - WebLearn
 - WordlePy
-- BPY script to animate a [LightPipe](https://cccgoe.de/projekte/lightpipe.html) in 3D
 # Gallery 
 
 **3D LightPipe effect**
@@ -39,7 +27,11 @@ https://github.com/user-attachments/assets/138254c9-4143-4f7e-bafc-ac8b93bfac27
 
 https://github.com/Erryo/Programming/assets/159823096/3d8bf3bc-1ab0-4542-bd60-911fb46bdd07.mp4
 
-**Wave function collapse**
+**Wave function collapse with SDL2**
+
+https://github.com/user-attachments/assets/78e70236-5f97-4d94-b188-d906f4dc0e92
+
+**Wave function collapse(Old version)**
 
 https://github.com/Erryo/Programming/assets/159823096/442f19fb-0b07-480d-a728-da7af7f0b738
 
@@ -52,14 +44,9 @@ https://github.com/Erryo/Programming/assets/159823096/050a17d3-1671-4e38-945d-51
 https://github.com/Erryo/Programming/assets/159823096/2a2783e2-26eb-4b85-aa2a-bc2db6256dd3
 
 
-
-## Usage
-
-To run the projects, navigate to the respective project directory and run python name.py or go run .
-The projects are written in Python and Go, so ensure you have the appropriate runtime environments installed.
 ## Contributing
 
-Contributions are not accepted at this time. However, if you encounter any issues while using the code, please report them through GitHub issues.
+Contributions are accepted. If you encounter any issues while using the code, please report them through GitHub issues.
 
 
 ## Hints For me 
