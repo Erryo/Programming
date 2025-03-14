@@ -6,13 +6,15 @@
          true,
          true,
          true,
-         false
+         false,
+         true
       ],
       "Left": [
          true,
          false,
          true,
          true,
+         false,
          false
       ],
       "Down": [
@@ -20,12 +22,14 @@
          false,
          true,
          false,
-         true
+         true,
+         false
       ],
       "Right": [
          true,
          true,
          true,
+         false,
          false,
          false
       ]
@@ -37,13 +41,15 @@
          true,
          true,
          true,
-         false
+         false,
+         true
       ],
       "Left": [
          true,
          false,
          true,
          true,
+         false,
          false
       ],
       "Down": [
@@ -51,12 +57,14 @@
          true,
          false,
          true,
-         false
+         false,
+         true
       ],
       "Right": [
          false,
          false,
          false,
+         true,
          true,
          true
       ]
@@ -68,13 +76,15 @@
          false,
          false,
          false,
-         true
+         true,
+         false
       ],
       "Left": [
          true,
          false,
          true,
          true,
+         false,
          false
       ],
       "Down": [
@@ -82,12 +92,14 @@
          true,
          false,
          true,
-         false
+         false,
+         true
       ],
       "Right": [
          true,
          true,
          true,
+         false,
          false,
          false
       ]
@@ -99,13 +111,15 @@
          true,
          true,
          true,
-         false
+         false,
+         true
       ],
       "Left": [
          false,
          true,
          false,
          false,
+         true,
          true
       ],
       "Down": [
@@ -113,12 +127,14 @@
          true,
          false,
          true,
-         false
+         false,
+         true
       ],
       "Right": [
          true,
          true,
          true,
+         false,
          false,
          false
       ]
@@ -130,6 +146,42 @@
          false,
          false,
          false,
+         true,
+         false
+      ],
+      "Left": [
+         false,
+         true,
+         false,
+         false,
+         true,
+         true
+      ],
+      "Down": [
+         false,
+         false,
+         true,
+         false,
+         true,
+         false
+      ],
+      "Right": [
+         false,
+         false,
+         false,
+         true,
+         true,
+         true
+      ]
+   },
+   {
+      "Index": 5,
+      "Top": [
+         false,
+         true,
+         true,
+         true,
+         false,
          true
       ],
       "Left": [
@@ -137,10 +189,12 @@
          true,
          false,
          false,
+         true,
          true
       ],
       "Down": [
-         false,
+         true,
+         true,
          false,
          true,
          false,
@@ -150,6 +204,7 @@
          false,
          false,
          false,
+         true,
          true,
          true
       ]

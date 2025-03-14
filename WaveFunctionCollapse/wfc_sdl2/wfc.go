@@ -3,45 +3,53 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
 
 func generateMap(state *state) {
+	start := time.Now()
 	wave := createWave()
 	models := getTileModel()
 	state.wave = &wave
 	finished := false
 
 	cellX, cellY := getRandomCell(wave)
+	state.selected = [2]int{cellX, cellY}
 	collapseCell(&wave[cellY][cellX])
 	propagate(&wave, cellX, cellY, models, state)
 
 	var coordinates [][2]int
-	for !finished {
+	for {
 
-		sdl.Delay(5000)
 		coordinates, finished = getLowestEntropy(wave)
+		if finished {
+			break
+		}
 		if len(coordinates) == 0 {
 			cellX, cellY = getRandomCell(wave)
 			collapseCell(&wave[cellY][cellX])
+			state.selected = [2]int{cellX, cellY}
 			propagate(&wave, cellX, cellY, models, state)
 			continue
-
 		}
 
 		coordToCollapse := coordinates[rand.Intn(len(coordinates))]
 		cellToCollapse := &wave[coordToCollapse[1]][coordToCollapse[0]]
 		collapseCell(cellToCollapse)
+		state.selected = [2]int{cellX, cellY}
 		propagate(&wave, coordToCollapse[0], coordToCollapse[1], models, state)
 	}
+	fmt.Print(time.Since(start))
 	fmt.Println("done")
 }
 
 func propagate(wave *[MAP_H][MAP_W][TOTAL_TILES]bool, x, y int, models []TileModel, state *state) {
+	sdl.Delay(30)
 	// Bounds Check
 	// collapsed Check
-	fmt.Println("started", x, y)
+	// fmt.Println("started", x, y)
 	state.selected = [2]int{x, y}
 	if x > MAP_W || x < 0 {
 		return
@@ -52,7 +60,7 @@ func propagate(wave *[MAP_H][MAP_W][TOTAL_TILES]bool, x, y int, models []TileMod
 	//	if getEntropy(wave[y][x]) == 1 {
 	//		return
 	//	}
-	fmt.Println("avoided")
+	//	fmt.Println("avoided")
 	var reducedEntropy bool
 	idxCurrentTile := getIndex((*wave)[y][x])
 
@@ -66,7 +74,7 @@ func propagate(wave *[MAP_H][MAP_W][TOTAL_TILES]bool, x, y int, models []TileMod
 	combinedDown := models[idxCurrentTile].Down
 	combinedRight := models[idxCurrentTile].Right
 
-	fmt.Println(idxCurrentTile)
+	//	fmt.Println(idxCurrentTile)
 	if getEntropy(wave[y][x]) != 1 {
 		for i, possible := range wave[y][x] {
 			if possible {
@@ -76,52 +84,51 @@ func propagate(wave *[MAP_H][MAP_W][TOTAL_TILES]bool, x, y int, models []TileMod
 				rights = append(rights, models[i].Right)
 			}
 		}
-		fmt.Println(tops, "\n", lefts, "\n", downs, "\n", rights)
+		//		fmt.Println(tops, "\n", lefts, "\n", downs, "\n", rights)
 		combinedTop = boolTrue(tops)
 		combinedLeft = boolTrue(lefts)
 		combinedRight = boolTrue(rights)
 		combinedDown = boolTrue(downs)
 	}
-	fmt.Println(combinedTop, "\n", combinedLeft, "\n", combinedDown, "\n", combinedRight)
+	//	fmt.Println(combinedTop, "\n", combinedLeft, "\n", combinedDown, "\n", combinedRight)
 
 	if y+1 < MAP_H && y+1 >= 0 && getEntropy(wave[y+1][x]) != 1 {
-		fmt.Println("D", wave[y+1][x])
-		fmt.Println(boolAnd((*wave)[y+1][x], combinedDown))
+		//		fmt.Println("D", wave[y+1][x], combinedDown)
+		//		fmt.Println(boolAnd((*wave)[y+1][x], combinedDown))
 		wave[y+1][x], reducedEntropy = boolAnd((*wave)[y+1][x], combinedDown)
-		fmt.Println("Down", wave[y+1][x])
+		//		fmt.Println("Down", wave[y+1][x])
 		if reducedEntropy {
 			propagate(wave, x, y+1, models, state)
 		}
 	}
 	if y-1 >= 0 && y-1 < MAP_H && getEntropy(wave[y-1][x]) != 1 {
-		fmt.Println("T", wave[y-1][x])
-		fmt.Println(boolAnd((*wave)[y-1][x], combinedTop))
+		//		fmt.Println("T", wave[y-1][x], combinedTop)
+		//		fmt.Println(boolAnd((*wave)[y-1][x], combinedTop))
 		wave[y-1][x], reducedEntropy = boolAnd((*wave)[y-1][x], combinedTop)
-		fmt.Println("Top", wave[y-1][x])
+		//		fmt.Println("Top", wave[y-1][x])
 		if reducedEntropy {
 			propagate(wave, x, y-1, models, state)
 		}
 	}
 	if x+1 < MAP_W && x+1 >= 0 && getEntropy(wave[y][x+1]) != 1 {
-		fmt.Println("R", wave[y][x+1])
-		fmt.Println(boolAnd((*wave)[y][x+1], combinedRight))
+		//		fmt.Println("R", wave[y][x+1], combinedRight)
+		//		fmt.Println(boolAnd((*wave)[y][x+1], combinedRight))
 		wave[y][x+1], reducedEntropy = boolAnd((*wave)[y][x+1], combinedRight)
-		fmt.Println("Right", wave[y][x+1])
+		//		fmt.Println("Right", wave[y][x+1])
 		if reducedEntropy {
 			propagate(wave, x+1, y, models, state)
 		}
 	}
 	if x-1 >= 0 && x-1 < MAP_W && getEntropy(wave[y][x-1]) != 1 {
-		fmt.Println("L", wave[y][x-1])
-		fmt.Println(boolAnd((*wave)[y][x-1], combinedLeft))
+		//		fmt.Println("L", wave[y][x-1], combinedLeft)
+		//		fmt.Println(boolAnd((*wave)[y][x-1], combinedLeft))
 		wave[y][x-1], reducedEntropy = boolAnd((*wave)[y][x-1], combinedLeft)
-		fmt.Println("Left", wave[y][x-1])
+		//		fmt.Println("Left", wave[y][x-1])
 		if reducedEntropy && len(wave[y][x-1]) != TOTAL_TILES {
 			propagate(wave, x-1, y, models, state)
 		}
 	}
-	fmt.Println("END propagate")
-	sdl.Delay(1000)
+	// fmt.Println("END propagate")
 }
 
 // used to  get all the possible tiles for a certain direction
@@ -142,11 +149,11 @@ outer:
 func boolAnd(a, b [TOTAL_TILES]bool) (c [TOTAL_TILES]bool, reducedEntropy bool) {
 	reducedEntropy = false
 	for i := range a {
-		if a[i] == b[i] {
+		if a[i] == b[i] || (a[i] != b[i] && a[i] == false) {
 			c[i] = a[i]
 			continue
 		}
-		fmt.Println("reducedEntropy")
+		//		fmt.Println("reducedEntropy")
 		reducedEntropy = true
 	}
 	return c, reducedEntropy

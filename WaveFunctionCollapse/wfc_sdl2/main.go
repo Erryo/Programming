@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
 )
@@ -36,18 +38,21 @@ func main() {
 	three, err := font.RenderUTF8Solid("3", sdl.Color{255, 0, 0, 0})
 	four, err := font.RenderUTF8Solid("4", sdl.Color{255, 0, 0, 0})
 	five, err := font.RenderUTF8Solid("5", sdl.Color{255, 0, 0, 0})
+	six, err := font.RenderUTF8Solid("6", sdl.Color{255, 0, 0, 0})
 	t0, err := renderer.CreateTextureFromSurface(zero)
 	t1, err := renderer.CreateTextureFromSurface(one)
 	t2, err := renderer.CreateTextureFromSurface(two)
 	t3, err := renderer.CreateTextureFromSurface(three)
 	t4, err := renderer.CreateTextureFromSurface(four)
 	t5, err := renderer.CreateTextureFromSurface(five)
+	t6, err := renderer.CreateTextureFromSurface(six)
 	zero.Free()
 	one.Free()
 	two.Free()
 	three.Free()
 	four.Free()
 	five.Free()
+	six.Free()
 
 	state := state{renderer: renderer, window: window}
 	(&state).loadAtlas()
@@ -55,8 +60,12 @@ func main() {
 	wave := createWave()
 	state.wave = &wave
 
-	state.textTexture = [](*sdl.Texture){t0, t1, t2, t3, t4, t5}
+	state.textTexture = [](*sdl.Texture){t0, t1, t2, t3, t4, t5, t6}
 
+	arg := os.Args[1:]
+	if len(arg) > 0 && arg[0] == "s" {
+		side()
+	}
 	go generateMap(&state)
 
 	running := true

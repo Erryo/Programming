@@ -22,7 +22,7 @@ type TileModel struct {
 const (
 	WIN_W       = 1020
 	WIN_H       = 900
-	MAP_W       = 10
-	MAP_H       = 10
-	TOTAL_TILES = 5
+	MAP_W       = 20
+	MAP_H       = 20
+	TOTAL_TILES = 6
 )
