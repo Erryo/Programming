@@ -5,15 +5,15 @@ This repository contains all the projects and side projects I create. Its purpos
 ## Projects
 Here are the current projects included in this repository:
 - BPY script to animate a [LightPipe](https://cccgoe.de/projekte/lightpipe.html) in 3D
+- WaveFunctionCollapse (in go and odin)
 - Calculator
+- IDoToo
+- WebLearn
 - Cryptography (Caesar Cypher)
 - ExpenseTracker
 - Hangman
 - PrimeagenAlgorithms
 - TicTacToeOld
-- IDoToo
-- WaveFunctionCollapse
-- WebLearn
 - WordlePy
 # Gallery 
 
@@ -46,7 +46,7 @@ https://github.com/Erryo/Programming/assets/159823096/2a2783e2-26eb-4b85-aa2a-bc
 
 ## Contributing
 
-Contributions are accepted. If you encounter any issues while using the code, please report them through GitHub issues.
+Contributions are welcome, especially optimisations. If you encounter any issues while using the code, please report them through GitHub issues.
 
 
 ## Hints For me 
